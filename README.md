@@ -1,1 +1,1 @@
-# harjoitustyo-tkt20010
+# Aineopintojen harjoitustyö: algoritmit ja tekoäly
