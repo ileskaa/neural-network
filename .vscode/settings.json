@@ -1,0 +1,6 @@
+{
+    "pylint.args": [
+        "--disable=missing-module-docstring",
+        "--disable=line-too-long",
+    ],
+}
