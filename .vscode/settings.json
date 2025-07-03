@@ -1,6 +1,10 @@
 {
     "pylint.args": [
-        "--disable=missing-module-docstring",
         "--disable=line-too-long",
     ],
+    "python.testing.pytestArgs": [
+        "src"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
 }
