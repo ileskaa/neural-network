@@ -79,3 +79,6 @@ The size of the input will not change, due to the specifications of the MNIST da
 - Public GitHub repositories
   - such as [Machine-Learning](https://github.com/xbeat/Machine-Learning/tree/main)
     - which for example has a great document about [cross-entropy](https://github.com/xbeat/Machine-Learning/blob/main/Cross-Entropy%20in%20Python.md)
+
+- Kaggle notebooks
+  - such as [Basic Neural Network from Scratch in Python](https://www.kaggle.com/code/soham1024/basic-neural-network-from-scratch-in-python)
