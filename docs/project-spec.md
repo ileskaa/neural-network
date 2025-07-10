@@ -6,7 +6,9 @@ The goal is to build a multilayer perceptron (MLP), which is a simple type of ne
 
 The aim is the use only Numpy, and possibly Matplotlib, as external libraries. Numpy because it performs vector and matrix operations much faster than if I were to implement them myself. And Matplotlib if I want to plot some charts to illustrate the training process.
 
-At the end of this course, I would like to save my optimized parameters, using [numpy.savez](https://numpy.org/doc/stable/reference/generated/numpy.savez.html) for example, and deploy my model via some cheap cloud provider so that my project can be easily tested. The aim is to create a simple browser-based interface where users can draw digits with mouse or finger, which the model would then recognize.
+## Deployment
+
+At the end of this course, I would like to save my optimized parameters, using [numpy.savez](https://numpy.org/doc/stable/reference/generated/numpy.savez.html) for example, and deploy my model via some cheap cloud provider so that my project can easily be tested. The aim is to create a simple browser-based interface where users can draw digits with mouse or finger, which the model would then recognize.
 
 ## Programming Languages
 
