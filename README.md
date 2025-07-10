@@ -6,3 +6,7 @@ _Aineopintojen harjoitustyö: algoritmit ja tekoäly_, 2025
 
 - [Project specification](./docs/project-spec.md)
 - [Testing report](./docs/testing.md)
+
+## Weekly reports
+
+- [Week 1](./docs/weekly-reports/week1.md)

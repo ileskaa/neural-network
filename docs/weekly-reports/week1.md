@@ -1,0 +1,19 @@
+# Weekly Report 1
+
+After the course's Moodle page was opened, I skimmed through the documentation, then rushed to see the list of available topics. I couldn't wait to pick mine. When I saw neural networks on the list, I knew what I would be working on. I had recently completed the course titled *Basics of mathematics in machine learning II*, which I had found both challenging and very satisfying. During that course we had learned about activation and loss functions, the chain rule, and backpropagation. We had also built a small neural network to approximate a trigonometric function. Choosing to train a model to recognize handwritten digits seemed like a great opportunity to learn more on the topic of neural networks.
+
+The next step was to choose a neural network architecture. I hesitated between a multilayer perceptron (MLP) and a convolutional neural network (CNN). The CNN is a great choice for classification tasks such as digit recognition, but after doing some reading and watching some videos (3Blue1Brown is great by the way), I was not sure if I would have time to write a satisfying CNN during this course. The MLP felt easier to implement, and I decided to roll with it.
+
+Now that I knew what I wanted to build, I created a repo, initialized poetry and installed some dependencies. Then, I began working on my project specification. The most time consuming part was to estimate the time and space complexity, since it required thinking through the whole training process and crunching some maths.
+
+Once I had a first version of my project spec, it felt logical to start working on weight initialization, because I saw that as the first step of the training process. I knew the rectified linear unit (ReLU) is a simple and popular activation function, and I had read that He initialization is designed to mitigate the issue of vanishing gradients that can arise when working with ReLU. I therefore wrote a function to initialize weights using [Kaiming He](https://people.csail.mit.edu/kaiming/)'s method, and wrote a bunch of tests for my function. I hadn't been using the unittest framework for a while, so it took me a moment to get used to it again. The course documentation, however, provided some good examples, and it therefore wasn't hard to get my first tests running.
+
+Next, I decided to tackle activation functions. I had already decided to use use ReLU for hidden layers, but ReLU is not necessarily a good choice for the output layer. The activation function picked for the output layer depends on the loss function that is being used during training. I had read that cross-entropy is a great metric for classification tasks, since it compares two probability distributions, and I therefore decided to use a loss function based on the cross-entropy score. Now it was easy to choose my other activation function. The softmax function makes a lot of sense when combined with a cross-entropy loss function, since softmax turns a vector of raw scores into probabilities, which can then be used to compute cross-entropy.
+
+Doing the work detailed in this document particularly improved my understanding of weight initialization. Writing tests for my initialization method really made me think about how the initial weights affect the training process and how the variance of the weights is affected by activation functions. ReLU has this particularity of turning roughly half of the inital weights to 0, which can slow down training if the initialization method does not compensate for ReLU's variance-reducing effect.
+
+Estimated workload: 13 hours.
+
+### Next steps
+
+Next, I intend to create a class for my neural network, initialize its weights and biases, and begin working on the forward pass.
