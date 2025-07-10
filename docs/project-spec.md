@@ -73,3 +73,7 @@ The size of the input will not change, due to the specifications of the MNIST da
   - [Rectifier (neural networks)](<https://en.wikipedia.org/wiki/Rectifier_(neural_networks)>)
   - [Softmax function](https://en.wikipedia.org/wiki/Softmax_function)
   - [Cross-entropy](https://en.wikipedia.org/wiki/Cross-entropy)
+
+- Public GitHub repositories
+  - such as [Machine-Learning](https://github.com/xbeat/Machine-Learning/tree/main)
+    - which for example has a great document about [cross-entropy](https://github.com/xbeat/Machine-Learning/blob/main/Cross-Entropy%20in%20Python.md)
