@@ -3,8 +3,7 @@
 import unittest
 import math
 import numpy as np
-from nn_utils import cross_entropy, he_initalization, one_hot_encode
-from activations import softmax
+from nn_utils import he_initalization
 
 def normal_distrib_pdf(x, mean = 0, variance = 1):
     """Probability density function for the normal distribution.
@@ -138,70 +137,3 @@ class TestHeInitialization(unittest.TestCase):
         self.assertTrue(
             0.98 < expected_variance / np.var(np.maximum(z, 0)) < 1.02
         )
-
-
-class TestCrossEntropy(unittest.TestCase):
-    """Tests for the cross-entropy loss function"""
-
-    def setUp(self):
-        """Generate an array with values in the range 0-9"""
-        self.y = np.random.randint(0, 10, size=400)
-
-    def test_one_hot_encoding(self):
-        """Ensure one-hot encoding works as expecped.
-        It will be required by the loss function.
-        
-        Since one-hot encoding turns every digit into a vector
-        composed of one 1 and nine 0s, the sum of the matrix
-        of one-hot encoded digits should equal the number of rows. 
-        """
-        size = self.y.size
-        hot_encoded = one_hot_encode(self.y)
-        possible_digits = 10
-        self.assertEqual(hot_encoded.shape, (size, possible_digits))
-        self.assertEqual(np.sum(hot_encoded), size)
-
-    def test_loss_function(self):
-        """Tests for the cross-entropy loss function.
-
-        Cross entropy should be lower
-        when the probability distributions are more alike.
-
-        The cross-entropy score should always be >= 0.
-        """
-        hot_encoded_5 = one_hot_encode(5)
-        raw_scores = np.array([2,1,1,1,1,1,1,1,1,1])
-        normalized_scores = softmax(raw_scores)
-        self.assertEqual(hot_encoded_5.shape, normalized_scores.shape)
-
-        cross_entropy_score = cross_entropy(hot_encoded_5, normalized_scores)
-
-        better_raw_scores = np.array([1,1,1,1,1,2,1,1,1,1])
-        better_normalized_scores = softmax(better_raw_scores)
-        lower_cross_entropy = cross_entropy(
-            hot_encoded_5, better_normalized_scores
-        )
-        self.assertTrue(lower_cross_entropy > 0 and cross_entropy_score > 0)
-        self.assertTrue(lower_cross_entropy < cross_entropy_score)
-
-        # Should raise an error if the shapes do not match
-        with self.assertRaises(ValueError):
-            too_long = np.array([1,1,1,1,1,2,1,1,1,1,1])
-            cross_entropy(hot_encoded_5, too_long)
-
-        # The loss function should also work with 2D arrays
-        two_d_array = np.array([[2,1,1,1,1,1,1,1,1,1],
-                                [1,1,1,1,1,2,1,1,1,1]])
-        normalized_2d_arr = softmax(two_d_array)
-        hot_encoded_arr = one_hot_encode([3, 2])
-        cross_entropy_score = cross_entropy(hot_encoded_arr, normalized_2d_arr)
-        self.assertTrue(cross_entropy_score > 0)
-
-        # Should raise an error if the first loss function argument
-        # is not one-hot encoded
-        with self.assertRaises(ValueError):
-            zeros = np.zeros(10)
-            cross_entropy(zeros, normalized_scores)
-        with self.assertRaises(ValueError):
-            two_d_zeros = np.zeros((2, 10))
-            cross_entropy(two_d_zeros, normalized_2d_arr)

@@ -53,7 +53,7 @@ class TestReluDerivative(ActivationTest):
     def test_values(self):
         """The output should contain only 0s and 1s"""
         shape = self.x.shape
-        total_values = shape [0] * shape[1]
+        total_values = shape[0] * shape[1]
         derivatives = relu_derivative(self.x)
         zeroes = np.sum(derivatives == 0)
         ones = np.sum(derivatives == 1)
