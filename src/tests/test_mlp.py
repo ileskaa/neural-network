@@ -2,7 +2,9 @@
 
 import unittest
 import numpy as np
+import loss
 from mlp import MultiLayerPerceptron
+from nn_utils import one_hot_encode
 
 
 class TestMLP(unittest.TestCase):
@@ -20,7 +22,8 @@ class TestMLP(unittest.TestCase):
         The size and amount of hidden layers is arbitrary.
         """
         layer_sizes = [784, 512, 256, 10]
-        self.model = MultiLayerPerceptron(layer_sizes)
+        self.rng = np.random.default_rng(84)
+        self.model = MultiLayerPerceptron(layer_sizes, self.rng)
 
     def test_initialization(self):
         """Testing weight and bias initialization.
@@ -58,5 +61,41 @@ class TestMLP(unittest.TestCase):
         # Activations and z vectors should be stored in the model
         self.assertEqual(len(self.model.z_vectors), 3)
         # The activation list should contain 4 values
-        # since it also stores the input
+        # since it also stores the network input
         self.assertEqual(len(self.model.activations), 4)
+
+    def test_backprop(self):
+        """Backpropagation tests.
+
+        Weights and biases should be updated after backpropagation.
+        
+        We'll be using a batch of 100 samples for these tests.
+        """
+        y_true = self.rng.integers(0, 10, size=100)
+        with self.assertRaises(IndexError):
+            # Should raise an error because we haven't done any forward pass yet
+            self.model.backprop(y_true)
+        x = self.rng.integers(0, 255, (100, 784))
+        output = self.model.forward(x)
+        y_true_encoded = one_hot_encode(y_true)
+        cross_entropy = loss.cross_entropy(y_true_encoded, output)
+        inital_weights = [w.copy() for w in self.model.weights]
+        initial_biases = self.model.biases
+        # The learning rate must be small enough.
+        # Else the gradients might overshoot
+        learning_rate = 0.0001
+        self.model.backprop(y_true, learning_rate)
+        weights_after = self.model.weights
+        biases_after = self.model.biases
+        n = len(inital_weights)
+        for layer in range(n):
+            np.not_equal(inital_weights[layer], weights_after[layer])
+            np.not_equal(initial_biases[layer], biases_after[layer])
+
+        # The loss function score should decrease
+        output_after_backprop = self.model.forward(x)
+        cross_entropy_after_backprop = loss.cross_entropy(
+            y_true_encoded,
+            output_after_backprop
+        )
+        self.assertTrue(cross_entropy_after_backprop < cross_entropy)

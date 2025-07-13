@@ -2,7 +2,8 @@
 
 import numpy as np
 
-def he_initalization(fan_in, fan_out):
+# Enable dependency injection for the RNG
+def he_initalization(fan_in, fan_out, rng=np.random.default_rng()):
     """He initialization is useful when working with ReLU activations.
     It maintains the variance of the activations,
     which helps prevent the gradient from becoming too small (vanishing)
@@ -12,7 +13,7 @@ def he_initalization(fan_in, fan_out):
     He initialization accounts for this by scaling the variance up.
     """
     std = np.sqrt(2 / fan_in)
-    return np.random.normal(0, std, size=(fan_in, fan_out))
+    return rng.normal(0, std, size=(fan_in, fan_out))
 
 def one_hot_encode(y):
     """One hot encodes digits"""
@@ -31,5 +32,3 @@ def verify_one_hot_encoding(y):
         single_sum = np.sum(y)
         if not np.isclose(single_sum, 1):
             raise ValueError("Not a one-hot encoded value")
-
-

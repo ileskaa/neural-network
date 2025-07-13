@@ -8,10 +8,14 @@ from nn_utils import he_initalization, one_hot_encode
 
 class MultiLayerPerceptron:
     """Neural network with the goal of classifying handwritten digits."""
-    def __init__(self, layer_sizes) -> None:
+    def __init__(self, layer_sizes, rng=np.random.default_rng()) -> None:
         """Initialize weights and biases"""
         self.weights = [
-            he_initalization(input_size, output_size) for input_size, output_size in zip(
+            he_initalization(
+                input_size,
+                output_size,
+                rng
+            ) for input_size, output_size in zip(
                 layer_sizes[:-1],
                 layer_sizes[1:]
             )
