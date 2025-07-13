@@ -61,7 +61,6 @@ class TestCrossEntropy(unittest.TestCase):
                                 [1,1,1,1,1,2,1,1,1,1]])
         normalized_2d_arr = softmax(two_d_array)
         hot_encoded_arr = one_hot_encode([3, 2])
-        print(hot_encoded_arr)
         cross_entropy_score = cross_entropy(hot_encoded_arr, normalized_2d_arr)
         self.assertTrue(cross_entropy_score > 0)
 
