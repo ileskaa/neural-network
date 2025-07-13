@@ -41,3 +41,22 @@ class TestMLP(unittest.TestCase):
         bias_sum = sum(np.sum(bias_vector) for bias_vector in biases)
         self.assertEqual(bias_sum, 0)
 
+    def test_forward(self):
+        """Testing the forward pass method of the network.
+        
+        We'll generate 784 integers to simulate a grayscale digit.
+        Then forwards them through the network.
+        At the end, we should get a discrete probability distribution
+        of 10 values.
+        """
+        x = np.random.randint(0, 255, 784)
+        output = self.model.forward(x)
+        self.assertEqual(output.shape, (10,))
+        summed_probabilities = np.sum(output)
+        self.assertAlmostEqual(summed_probabilities, 1)
+
+        # Activations and z vectors should be stored in the model
+        self.assertEqual(len(self.model.z_vectors), 3)
+        # The activation list should contain 4 values
+        # since it also stores the input
+        self.assertEqual(len(self.model.activations), 4)
