@@ -1,6 +1,8 @@
 {
     "pylint.args": [
         "--disable=line-too-long",
+        "--disable=invalid-name",
+        "--disable=too-many-locals"
     ],
     "python.testing.pytestArgs": [
         "src"
