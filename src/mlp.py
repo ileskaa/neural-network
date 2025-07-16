@@ -77,3 +77,18 @@ class MultiLayerPerceptron:
                 if dL_da.shape != da_dz.shape:
                     raise ValueError('dL/da and da/dz should have the same shape')
                 dL_dz = dL_da * da_dz
+
+    def predict(self, x):
+        """Takes in an image or a vector of images in pixel values
+        and predicts which digit it is based on model parameters.
+
+        This network's forward method returns an array
+        of discrete probabilities for each digit.
+        Using numpy's argmax method, we'll get the index of the highest probability,
+        since that will correspond to our predicted digit.
+        """
+        y_pred = self.forward(x)
+        if y_pred.ndim > 1:
+            # argmax returns the indices of the maximum values
+            return np.argmax(y_pred, axis=1)
+        return np.argmax(y_pred)

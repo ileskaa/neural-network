@@ -99,3 +99,19 @@ class TestMLP(unittest.TestCase):
             output_after_backprop
         )
         self.assertTrue(cross_entropy_after_backprop < cross_entropy)
+
+    def test_predict(self):
+        """Tests for the networks digit prediction method.
+
+        The predict method should return a single integer or an array of integers,
+        depending on the shape of the input.
+        """
+        single_image = np.random.randint(0, 255, 784)
+        y_pred = self.model.predict(single_image)
+        self.assertIsInstance(y_pred, np.int64)
+
+        # Test array inputs
+        image_vector = self.rng.integers(0, 255, (100, 784))
+        y_pred = self.model.predict(image_vector)
+        self.assertIsInstance(y_pred, np.ndarray)
+        self.assertTrue(np.issubdtype(y_pred.dtype, np.int64))
