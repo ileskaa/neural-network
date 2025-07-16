@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 import loss
 from mlp import MultiLayerPerceptron
-from nn_utils import one_hot_encode
+from nn_utils import one_hot_encode, normalize_image_data
 
 
 class TestMLP(unittest.TestCase):
@@ -68,7 +68,7 @@ class TestMLP(unittest.TestCase):
         """Backpropagation tests.
 
         Weights and biases should be updated after backpropagation.
-        
+
         We'll be using a batch of 100 samples for these tests.
         """
         y_true = self.rng.integers(0, 10, size=100)
@@ -76,15 +76,15 @@ class TestMLP(unittest.TestCase):
             # Should raise an error because we haven't done any forward pass yet
             self.model.backprop(y_true)
         x = self.rng.integers(0, 255, (100, 784))
+        x = normalize_image_data(x)
         output = self.model.forward(x)
+
         y_true_encoded = one_hot_encode(y_true)
         cross_entropy = loss.cross_entropy(y_true_encoded, output)
         inital_weights = [w.copy() for w in self.model.weights]
         initial_biases = self.model.biases
-        # The learning rate must be small enough.
-        # Else the gradients might overshoot
-        learning_rate = 0.0001
-        self.model.backprop(y_true, learning_rate)
+        self.model.backprop(y_true)
+
         weights_after = self.model.weights
         biases_after = self.model.biases
         n = len(inital_weights)

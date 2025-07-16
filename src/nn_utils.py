@@ -32,3 +32,11 @@ def verify_one_hot_encoding(y):
         single_sum = np.sum(y)
         if not np.isclose(single_sum, 1):
             raise ValueError("Not a one-hot encoded value")
+
+def normalize_image_data(x):
+    """Normalize pixel values to scale them down to [0, 1].
+    This prevents oscillation and overshooting during gradient descent.
+    Without normalization, finding an appropriate learning rate
+    would be much harder.
+    """
+    return x / 255
