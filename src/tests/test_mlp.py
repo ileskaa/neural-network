@@ -90,29 +90,36 @@ class TestMLP(unittest.TestCase):
 
         Weights and biases should be updated after backpropagation.
 
+        The backprop method is expected to raise an error if it is called
+        before a forward pass is run.
+        The forward pass will initialize lists of activations and z vectors,
+        which are required by the forward pass.
+
         We'll be using a batch of 100 samples for these tests.
         """
         y_true = self.gen_y_sample()
+        # Backprop should raise an error because we have yet to do a forward pass
         with self.assertRaises(IndexError):
-            # Should raise an error because we haven't done any forward pass yet
             self.model.backprop(y_true)
 
         x = self.gen_x_sample('array')
         x = normalize_image_data(x)
         output = self.model.forward(x)
-
         y_true_encoded = one_hot_encode(y_true)
         cross_entropy = loss.cross_entropy(y_true_encoded, output)
-        inital_weights = [w.copy() for w in self.model.weights]
-        initial_biases = self.model.biases
-        self.model.backprop(y_true)
 
+        # Weights and biases should be updated after backpropagation
+        inital_weights = [w.copy() for w in self.model.weights]
+        initial_biases = [b.copy() for b in self.model.biases]
+        self.model.backprop(y_true)
         weights_after = self.model.weights
         biases_after = self.model.biases
         n = len(inital_weights)
         for layer in range(n):
-            np.not_equal(inital_weights[layer], weights_after[layer])
-            np.not_equal(initial_biases[layer], biases_after[layer])
+            equal_weights = np.array_equal(inital_weights[layer], weights_after[layer])
+            equal_biases = np.array_equal(initial_biases[layer], biases_after[layer])
+            self.assertFalse(equal_weights)
+            self.assertFalse(equal_biases)
 
         # The loss function score should decrease
         output_after_backprop = self.model.forward(x)
