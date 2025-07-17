@@ -1,6 +1,8 @@
 """Tests for the MultiLayerPerceptron class"""
 
+import io
 import unittest
+import unittest.mock
 import numpy as np
 import loss
 from mlp import MultiLayerPerceptron
@@ -144,3 +146,36 @@ class TestMLP(unittest.TestCase):
         y_pred = self.model.predict(image_vector)
         self.assertIsInstance(y_pred, np.ndarray)
         self.assertTrue(np.issubdtype(y_pred.dtype, np.int64))
+
+    # The patch decorator patches a target with a new object.
+    # For this test, we'll patch the standard ouput with the StringIO method,
+    # which will allow us to test if the training method prints the expected strings.
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_train(self, mock_stdout):
+        """Tests for the network's training method.
+
+        The training method should update model parameters
+        and print data about the advancement of the training process.
+
+        The method should raise an error if pixel data is not normalized.
+        """
+        x = self.gen_x_sample('array')
+        y = self.gen_y_sample()
+        # Should raise error if data is not normalized
+        with self.assertRaises(ValueError):
+            self.model.train(x, y, epochs=1)
+
+        # Cross-entropy should be lower after training
+        x = normalize_image_data(x)
+        output = self.model.forward(x)
+        y_hot_enc = one_hot_encode(y)
+        ce_score = loss.cross_entropy(output, y_hot_enc)
+        self.model.train(x, y, epochs=1)
+        new_output = self.model.forward(x)
+        new_ce_score = loss.cross_entropy(new_output, y_hot_enc)
+        self.assertTrue(new_ce_score < ce_score)
+
+        # The method should print training-related information
+        standard_output = mock_stdout.getvalue()
+        self.assertIn("Loss", standard_output)
+        self.assertIn("Elapsed time", standard_output)
