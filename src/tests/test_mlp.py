@@ -46,10 +46,11 @@ class TestMLP(unittest.TestCase):
         bias_sum = sum(np.sum(bias_vector) for bias_vector in biases)
         self.assertEqual(bias_sum, 0)
 
-    def gen_x_sample(self, out_type='single'):
+    def gen_x_sample(self, out_type='single', num_images=100):
         """Generate a random sample of pixel values to simulate image data.
         
-        Using this method prevents repetition in the test methods.
+        This method prevents repetition since samples are used in a bunch of tests.
+
         Can return either a single image or an array of images.
         """
         low = 0
@@ -57,7 +58,6 @@ class TestMLP(unittest.TestCase):
         num_pixels = 784
         if out_type == 'single':
             return self.rng.integers(low, high, num_pixels)
-        num_images = 100
         return self.rng.integers(low, high, size=(num_images, num_pixels))
 
     def gen_y_sample(self):
@@ -102,6 +102,12 @@ class TestMLP(unittest.TestCase):
         y_true = self.gen_y_sample()
         # Backprop should raise an error because we have yet to do a forward pass
         with self.assertRaises(IndexError):
+            self.model.backprop(y_true)
+
+        # Raise an error if x and y are based on a different number of images
+        x = self.gen_x_sample('array', num_images=99)
+        output = self.model.forward(x)
+        with self.assertRaises(ValueError):
             self.model.backprop(y_true)
 
         x = self.gen_x_sample('array')

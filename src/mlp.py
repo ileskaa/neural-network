@@ -77,8 +77,6 @@ class MultiLayerPerceptron:
                 dL_da = np.matmul(dL_dz, dz_da.T) # (batch_size, prev_layer_size)
                 z = self.z_vectors[layer-1]
                 da_dz = relu_derivative(z)
-                if dL_da.shape != da_dz.shape:
-                    raise ValueError('dL/da and da/dz should have the same shape')
                 dL_dz = dL_da * da_dz
 
     def predict(self, x):
