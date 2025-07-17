@@ -44,6 +44,27 @@ class TestMLP(unittest.TestCase):
         bias_sum = sum(np.sum(bias_vector) for bias_vector in biases)
         self.assertEqual(bias_sum, 0)
 
+    def gen_x_sample(self, out_type='single'):
+        """Generate a random sample of pixel values to simulate image data.
+        
+        Using this method prevents repetition in the test methods.
+        Can return either a single image or an array of images.
+        """
+        low = 0
+        high = 256 # Upper bound is exclusive
+        num_pixels = 784
+        if out_type == 'single':
+            return self.rng.integers(low, high, num_pixels)
+        num_images = 100
+        return self.rng.integers(low, high, size=(num_images, num_pixels))
+
+    def gen_y_sample(self):
+        """Generate a random sample of digits"""
+        num_digits = 100
+        low = 0
+        high = 10
+        return self.rng.integers(low, high, size=num_digits)
+
     def test_forward(self):
         """Testing the forward pass method of the network.
         
@@ -52,7 +73,7 @@ class TestMLP(unittest.TestCase):
         At the end, we should get a discrete probability distribution
         of 10 values.
         """
-        x = np.random.randint(0, 255, 784)
+        x = self.gen_x_sample('single')
         output = self.model.forward(x)
         self.assertEqual(output.shape, (10,))
         summed_probabilities = np.sum(output)
@@ -71,11 +92,12 @@ class TestMLP(unittest.TestCase):
 
         We'll be using a batch of 100 samples for these tests.
         """
-        y_true = self.rng.integers(0, 10, size=100)
+        y_true = self.gen_y_sample()
         with self.assertRaises(IndexError):
             # Should raise an error because we haven't done any forward pass yet
             self.model.backprop(y_true)
-        x = self.rng.integers(0, 255, (100, 784))
+
+        x = self.gen_x_sample('array')
         x = normalize_image_data(x)
         output = self.model.forward(x)
 
@@ -106,12 +128,12 @@ class TestMLP(unittest.TestCase):
         The predict method should return a single integer or an array of integers,
         depending on the shape of the input.
         """
-        single_image = np.random.randint(0, 255, 784)
+        single_image = self.gen_x_sample()
         y_pred = self.model.predict(single_image)
         self.assertIsInstance(y_pred, np.int64)
 
         # Test array inputs
-        image_vector = self.rng.integers(0, 255, (100, 784))
+        image_vector = self.gen_x_sample('array')
         y_pred = self.model.predict(image_vector)
         self.assertIsInstance(y_pred, np.ndarray)
         self.assertTrue(np.issubdtype(y_pred.dtype, np.int64))
