@@ -179,3 +179,13 @@ class TestMLP(unittest.TestCase):
         standard_output = mock_stdout.getvalue()
         self.assertIn("Loss", standard_output)
         self.assertIn("Elapsed time", standard_output)
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_accuracy_(self, mock_stdout):
+        """Verify that the accuracy measurement method prints to the standard output"""
+        x = self.gen_x_sample('array')
+        y = self.gen_y_sample()
+        self.model.measure_accuracy(x,y)
+        std_output = mock_stdout.getvalue()
+        self.assertIn("Accuracy", std_output)
+        self.assertIn("%", std_output)
