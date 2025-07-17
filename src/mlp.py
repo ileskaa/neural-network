@@ -148,7 +148,7 @@ class MultiLayerPerceptron:
         diff = end_time - start_time
         print(f"Elapsed time: {diff:.2f} seconds")
 
-    def test_accuracy(self, x_test, y_test):
+    def measure_accuracy(self, x_test, y_test):
         """Use test data to check the accuracy of the model"""
         n = len(x_test)
         predictions = self.predict(x_test)
