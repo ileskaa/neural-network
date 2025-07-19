@@ -6,7 +6,7 @@ Before implementing a method to actually train my network, I needed a way to act
 
 Once I managed to implement a training method that actually worked, I started tweaking various network parameters to see what kind of accuracy I would be able to achieve on the MNIST testing dataset, which is comprised of 10 000 digits. I used 20 epochs for my tests, abd the best score I was able to achieve was a 97.63% accuracy. This was achieved with layers of size [784, 384, 128, 10], a learning rate of 0.02, and a batch size of 64. I don't think I will be able to go past 98% with my simple stochastic gradient descent, but I could potentially get better results using the [Adam](https://arxiv.org/pdf/1412.6980) (adaptive moment estimation) optimization algorithm.
 
-**Estimated workload:**
+**Estimated workload:** 16 hours
 
 
 ## Challenges
@@ -33,4 +33,4 @@ I also learned how to use unit tests to verify that strings are printed out corr
 
 ## Next Steps
 
-Pillow library?
+Next I want to create a browser interface that allows the user to draw digits, which my model will then try to recognize. I'll be creating a simple web app using Flask. Since 28x28 pixels is really small, I want to give the user a bigger surface to draw on. This means that my backend will then need to scale the images down to 28x28 pixels, so that they can be fed into the neural network. The Pillow library might allow me to do just that.
