@@ -45,7 +45,7 @@ def load_labels(filepath):
 def load_data():
     """Load MNIST data from UByte files"""
     current_dir = os.path.dirname(__file__)
-    data_dir = os.path.join(current_dir, '..', 'data')
+    data_dir = os.path.join(current_dir, '../../data')
 
     filenames = [
         'train-images.idx3-ubyte',
