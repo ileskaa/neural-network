@@ -1,7 +1,7 @@
 """Loss function used to optimizize model parameters"""
 
 import numpy as np
-from nn_utils import verify_one_hot_encoding
+from .nn_utils import verify_one_hot_encoding
 
 def cross_entropy(y_true, y_pred):
     """Cross-entropy loss function.

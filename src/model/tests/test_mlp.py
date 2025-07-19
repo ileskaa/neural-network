@@ -4,9 +4,9 @@ import io
 import unittest
 import unittest.mock
 import numpy as np
-import loss
-from mlp import MultiLayerPerceptron
-from nn_utils import one_hot_encode, normalize_image_data
+from model import loss
+from model.mlp import MultiLayerPerceptron
+from model.nn_utils import one_hot_encode, normalize_image_data
 
 
 class TestMLP(unittest.TestCase):

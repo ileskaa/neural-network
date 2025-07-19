@@ -3,7 +3,7 @@
 import unittest
 import math
 import numpy as np
-from nn_utils import he_initalization
+from model.nn_utils import he_initalization
 
 def normal_distrib_pdf(x, mean = 0, variance = 1):
     """Probability density function for the normal distribution.

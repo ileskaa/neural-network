@@ -2,9 +2,9 @@
 
 import unittest
 import numpy as np
-from activations import softmax
-from loss import cross_entropy, cross_entropy_gradient
-from nn_utils import one_hot_encode
+from model.activations import softmax
+from model.loss import cross_entropy, cross_entropy_gradient
+from model.nn_utils import one_hot_encode
 
 
 class TestCrossEntropy(unittest.TestCase):

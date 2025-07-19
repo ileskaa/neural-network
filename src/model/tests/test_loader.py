@@ -1,7 +1,7 @@
 """Tests for the MNIST dataset loader"""
 
 import unittest
-from mnist_loader import load_data
+from model.mnist_loader import load_data
 
 
 class TestLoader(unittest.TestCase):

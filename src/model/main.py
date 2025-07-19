@@ -1,8 +1,8 @@
 """File used to initialize and train the network from scratch"""
 
-from mlp import MultiLayerPerceptron
-from mnist_loader import load_data
-from nn_utils import normalize_image_data
+from .mlp import MultiLayerPerceptron
+from .mnist_loader import load_data
+from .nn_utils import normalize_image_data
 
 if __name__ == "__main__":
     (x_train, y_train), (x_test, y_test) = load_data()

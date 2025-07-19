@@ -27,7 +27,7 @@ def load_images(filepath):
         # `ìmages` is currently a flat vector. We have to reshape it
         images = images.reshape(num_images, rows * cols)
         return images
-    
+
 def load_labels(filepath):
     """Load MNIST labels from a UByte file.
 

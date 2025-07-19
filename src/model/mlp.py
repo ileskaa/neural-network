@@ -2,9 +2,9 @@
 
 import time
 import numpy as np
-from activations import relu, relu_derivative, softmax
-from loss import cross_entropy, cross_entropy_gradient
-from nn_utils import he_initalization, one_hot_encode
+from .activations import relu, relu_derivative, softmax
+from .loss import cross_entropy, cross_entropy_gradient
+from .nn_utils import he_initalization, one_hot_encode
 
 
 class MultiLayerPerceptron:

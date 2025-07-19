@@ -2,7 +2,7 @@
 
 import unittest
 import numpy as np
-from activations import relu, relu_derivative, softmax
+from model.activations import relu, relu_derivative, softmax
 
 
 class ActivationTest(unittest.TestCase):
