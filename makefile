@@ -1,2 +1,2 @@
 dev:
-	poetry run flask --app src/web/app run
+	poetry run flask --app src/web/app run --debug
