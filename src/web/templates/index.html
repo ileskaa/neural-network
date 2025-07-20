@@ -17,6 +17,15 @@
   let drawing = false
 
   function getPos(event) {
+    if (event.touches) {
+      const rect = canvas.getBoundingClientRect()
+      return {
+        // Touch event coordinates are initially relative to the viewport,
+        // so we need to do some math
+        x: event.touches[0].clientX - rect.left,
+        y: event.touches[0].clientY - rect.top
+      }
+    }
     return {
       x: event.offsetX,
       y: event.offsetY
@@ -50,4 +59,8 @@
   canvas.addEventListener('mousedown', startDrawing)
   canvas.addEventListener('mousemove', draw)
   canvas.addEventListener('mouseup', stopDrawing)
+
+  canvas.addEventListener('touchstart', startDrawing)
+  canvas.addEventListener('touchmove', draw)
+  canvas.addEventListener('touchend', stopDrawing)
 </script>
