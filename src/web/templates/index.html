@@ -1,11 +1,53 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Digit Recognizer</title>
-<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='network.svg') }}">
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='network.svg') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 <h1>Hello!</h1>
 
-<!-- <div id="square"></div> -->
-
 <canvas id="square" width="280" height="280"></canvas>
+
+<script>
+  const canvas = document.getElementById('square')
+  const ctx = canvas.getContext('2d')
+  ctx.lineWidth = 8
+  ctx.lineCap = 'round'
+
+  let drawing = false
+
+  function getPos(event) {
+    return {
+      x: event.offsetX,
+      y: event.offsetY
+    }
+  }
+
+  function startDrawing(event) {
+    drawing = true
+    ctx.beginPath()
+    const pos = getPos(event)
+    // Begin a new sub-path at the specified point
+    ctx.moveTo(pos.x, pos.y)
+  }
+
+  function draw(event) {
+    if (!drawing)
+      return
+    const pos = getPos(event)
+    // Add a straight line to the current sub-path by connecting the sub-path's
+    // last point to the specified coordinate
+    ctx.lineTo(pos.x, pos.y)
+    // Outline the current path with the current storke style
+    ctx.stroke()
+  }
+
+  function stopDrawing(event) {
+    drawing = false
+    ctx.closePath()
+  }
+
+  canvas.addEventListener('mousedown', startDrawing)
+  canvas.addEventListener('mousemove', draw)
+  canvas.addEventListener('mouseup', stopDrawing)
+</script>
