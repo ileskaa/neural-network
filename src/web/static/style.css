@@ -16,3 +16,24 @@ body {
 #square {
   border: solid;
 }
+
+button {
+  width: 286px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  cursor: pointer;
+  color: #fff;
+}
+
+button.reset {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+button.submit {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
