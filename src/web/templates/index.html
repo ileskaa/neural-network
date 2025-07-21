@@ -1,10 +1,18 @@
 <!doctype html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digit Recognizer</title>
-<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='network.svg') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-<h1>Hello!</h1>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digit Recognizer</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='network.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+  </style>
+</head>
+
+<div id="header">
+  <h1>Draw a Digit!</h1>
+</div>
 
 <canvas id="square" width="280" height="280"></canvas>
 
@@ -13,6 +21,7 @@
 <button class="submit">Submit</button>
 
 <script>
+  const body = document.getElementsByTagName('body')[0]
   const canvas = document.getElementById('square')
   const ctx = canvas.getContext('2d')
   ctx.lineWidth = 8
@@ -55,14 +64,55 @@
     ctx.stroke()
   }
 
+  function getGrayscalePixels(canvas) {
+    const smallCanvas = document.createElement('canvas')
+    const size = 28
+    smallCanvas.width = smallCanvas.height = size
+    const smallCtx = smallCanvas.getContext('2d')
+    smallCtx.drawImage(canvas, 0, 0, size, size)
+    const smallImageData = smallCtx.getImageData(
+      0, 0, size, size
+    )
+    // The data property represents a 1D array containg the data in RGBA order.
+    // The order goes by rows from the top-left pixel to the bottom-right
+    const data = smallImageData.data
+
+    const pixels = []
+
+    for (let i = 0; i < data.length; i += 4) {
+      // Since we are only drawing in black, RGB values will always be 0.
+      // Only the alpha value will be above 0.
+      const r = data[i]
+      const g = data[i + 1]
+      const b = data[i + 2]
+      const a = data[i + 3]
+
+      // This shouldn't log anything
+      if (r > 0 || g > 0 || b > 0)
+        console.log('RGB', r, g, b)
+
+      pixels.push(a)
+    }
+
+    // Should normalize pixel values before submitting to server
+
+    return pixels
+  }
+
   function stopDrawing(event) {
     drawing = false
     ctx.closePath()
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const data = imageData.data
+
+    const pixels = getGrayscalePixels(canvas)
   }
 
   canvas.addEventListener('mousedown', startDrawing)
   canvas.addEventListener('mousemove', draw)
-  canvas.addEventListener('mouseup', stopDrawing)
+  // We attach this listener to the body since we wanna be able to stop drawing
+  // no matter where the mouse is
+  body.addEventListener('mouseup', stopDrawing)
 
   canvas.addEventListener('touchstart', startDrawing)
   canvas.addEventListener('touchmove', draw)
