@@ -187,7 +187,7 @@ class TestMLP(unittest.TestCase):
         self.assertIn("Elapsed time", standard_output)
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_accuracy_(self, mock_stdout):
+    def test_accuracy(self, mock_stdout):
         """Verify that the accuracy measurement method prints to the standard output"""
         x = self.gen_x_sample('array')
         y = self.gen_y_sample()
@@ -195,3 +195,20 @@ class TestMLP(unittest.TestCase):
         std_output = mock_stdout.getvalue()
         self.assertIn("Accuracy", std_output)
         self.assertIn("%", std_output)
+
+    @unittest.mock.patch('numpy.savez')
+    def test_parameter_save(self, mock_np_savez):
+        """Verify that the model is able to save its parameters into files"""
+        self.model.save_parameters()
+        self.assertEqual(mock_np_savez.call_count, 3)
+
+        expected_filenames = [f"src/web/parameters/layer{num}" for num in range(1, 4)]
+        for i in range(3):
+            # call_args_list is a list of call objects
+            kall = mock_np_savez.call_args_list[i]
+            # call objects have an args and a kwargs property.
+            # The first argument is expected to be
+            # the path where the file would be saved.
+            filename = kall.args[0]
+            expected = expected_filenames[i]
+            self.assertEqual(filename, expected)

@@ -154,3 +154,17 @@ class MultiLayerPerceptron:
         accuracy = sum(comparison)/n
         percents = accuracy * 100
         print(f"Accuracy on test data: {percents:.2f}%")
+
+    def save_parameters(self):
+        """Save model parameters into a file.
+        This will allow the Flask application to access those parameters once deployed.
+        """
+        destination_dir = 'src/web/parameters/'
+        n = len(self.weights)
+        for i in range(n):
+            filename = 'layer' + str(i+1)
+            np.savez(
+                destination_dir+filename,
+                weights=self.weights[i],
+                biases=self.biases[i]
+            )
