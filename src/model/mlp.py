@@ -12,7 +12,7 @@ class MultiLayerPerceptron:
 
     def __init__(
         self,
-        layer_sizes,
+        layer_sizes=None,
         rng=np.random.default_rng(),
         weights=None,
         biases=None
@@ -22,6 +22,9 @@ class MultiLayerPerceptron:
         The model can be initialized with pre-defined weights and biases.
         If not provided, a new set of weights and biases will be provided.
         """
+
+        if layer_sizes is None:
+            layer_sizes = [784, 256, 128, 10]
 
         self.weights = weights or [
             he_initalization(
