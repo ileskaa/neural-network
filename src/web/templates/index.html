@@ -46,6 +46,7 @@
   }
 
   function startDrawing(event) {
+    event.preventDefault()
     drawing = true
     ctx.beginPath()
     const pos = getPos(event)
@@ -117,4 +118,12 @@
   canvas.addEventListener('touchstart', startDrawing)
   canvas.addEventListener('touchmove', draw)
   canvas.addEventListener('touchend', stopDrawing)
+
+  const resetButton = document.getElementsByClassName('reset')[0]
+
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+  }
+
+  resetButton.addEventListener('click', clearCanvas)
 </script>
