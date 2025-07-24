@@ -9,6 +9,7 @@ from .nn_utils import he_initalization, one_hot_encode
 
 class MultiLayerPerceptron:
     """Neural network with the goal of classifying handwritten digits."""
+
     def __init__(self, layer_sizes, rng=np.random.default_rng()) -> None:
         """Initialize weights and biases"""
         self.weights = [
@@ -32,8 +33,8 @@ class MultiLayerPerceptron:
         """
         n = len(self.weights)
         # Reset activations and z vectors at each forward pass
-        self.activations = [network_input] # store input and activations
-        self.z_vectors = [] # store pre-activation values
+        self.activations = [network_input]  # store input and activations
+        self.z_vectors = []  # store pre-activation values
 
         for layer in range(n):
             w = self.weights[layer]
@@ -59,7 +60,7 @@ class MultiLayerPerceptron:
         # cross_entropy_gradient() returns a gradient normalized by batch size
         dL_dz = cross_entropy_gradient(y_pred, y_hot_encoded)
 
-        num_layers = len(self.weights) # excluding input layer
+        num_layers = len(self.weights)  # excluding input layer
         for layer in reversed(range(num_layers)):
             dz_dW = self.activations[layer]
             # Can overflow if the learning rate is too high
@@ -74,7 +75,7 @@ class MultiLayerPerceptron:
             if layer > 0:
                 # Can overflow if the learning rate is too high
                 dz_da = self.weights[layer]
-                dL_da = np.matmul(dL_dz, dz_da.T) # (batch_size, prev_layer_size)
+                dL_da = np.matmul(dL_dz, dz_da.T)  # (batch_size, prev_layer_size)
                 z = self.z_vectors[layer-1]
                 da_dz = relu_derivative(z)
                 dL_dz = dL_da * da_dz
@@ -155,11 +156,10 @@ class MultiLayerPerceptron:
         percents = accuracy * 100
         print(f"Accuracy on test data: {percents:.2f}%")
 
-    def save_parameters(self):
+    def save_parameters(self, destination_dir='src/web/parameters/'):
         """Save model parameters into a file.
         This will allow the Flask application to access those parameters once deployed.
         """
-        destination_dir = 'src/web/parameters/'
         n = len(self.weights)
         for i in range(n):
             filename = 'layer' + str(i+1)
@@ -168,3 +168,21 @@ class MultiLayerPerceptron:
                 weights=self.weights[i],
                 biases=self.biases[i]
             )
+
+    def load_layer(self, source):
+        """Load layer parameters from an .npz file"""
+        data = np.load(source)
+        return (data['weights'], data['biases'])
+
+    def load_parameters(self, source_dir='src/web/parameters/', layers=3):
+        """Load model parameters from .npz files.
+        Enables the web app to access the parameters optimized during training.
+        """
+        weights = []
+        biases = []
+        for layer in range(1, layers+1):
+            filename = source_dir + f'layer{layer}.npz'
+            weights_arr, biases_arr = self.load_layer(filename)
+            weights.append(weights_arr)
+            biases.append(biases_arr)
+        return (weights, biases)

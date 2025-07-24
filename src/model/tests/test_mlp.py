@@ -3,6 +3,7 @@
 import io
 import unittest
 import unittest.mock
+import tempfile
 import numpy as np
 from model import loss
 from model.mlp import MultiLayerPerceptron
@@ -11,6 +12,7 @@ from model.nn_utils import one_hot_encode, normalize_image_data
 
 class TestMLP(unittest.TestCase):
     """Unit tests for the neural network"""
+
     def setUp(self) -> None:
         """Create a model to be used during testing.
 
@@ -29,7 +31,7 @@ class TestMLP(unittest.TestCase):
 
     def test_initialization(self):
         """Testing weight and bias initialization.
-        
+
         The model defined in the setUp function has 2 hidden layers
         and 1 output layer.
         """
@@ -48,13 +50,13 @@ class TestMLP(unittest.TestCase):
 
     def gen_x_sample(self, out_type='single', num_images=100):
         """Generate a random sample of pixel values to simulate image data.
-        
+
         This method prevents repetition since samples are used in a bunch of tests.
 
         Can return either a single image or an array of images.
         """
         low = 0
-        high = 256 # Upper bound is exclusive
+        high = 256  # Upper bound is exclusive
         num_pixels = 784
         if out_type == 'single':
             return self.rng.integers(low, high, num_pixels)
@@ -69,7 +71,7 @@ class TestMLP(unittest.TestCase):
 
     def test_forward(self):
         """Testing the forward pass method of the network.
-        
+
         We'll generate 784 integers to simulate a grayscale digit.
         Then forwards them through the network.
         At the end, we should get a discrete probability distribution
@@ -191,7 +193,7 @@ class TestMLP(unittest.TestCase):
         """Verify that the accuracy measurement method prints to the standard output"""
         x = self.gen_x_sample('array')
         y = self.gen_y_sample()
-        self.model.measure_accuracy(x,y)
+        self.model.measure_accuracy(x, y)
         std_output = mock_stdout.getvalue()
         self.assertIn("Accuracy", std_output)
         self.assertIn("%", std_output)
@@ -212,3 +214,24 @@ class TestMLP(unittest.TestCase):
             filename = kall.args[0]
             expected = expected_filenames[i]
             self.assertEqual(filename, expected)
+
+    def test_parameter_load(self):
+        """Verify that the model is able to load parameters from files"""
+        with tempfile.NamedTemporaryFile(suffix=".npz") as tmp:
+            weights0 = self.model.weights[0]
+            biases0 = self.model.biases[0]
+            np.savez(tmp.name, weights=weights0, biases=biases0)
+
+            weights_from_file, biases_from_file = self.model.load_layer(tmp.name)
+            np.testing.assert_array_equal(weights0, weights_from_file)
+            np.testing.assert_array_equal(biases0, biases_from_file)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            self.model.save_parameters(destination_dir=tmpdir)
+            weights, biases = self.model.load_parameters(tmpdir)
+
+        self.assertTrue(len(weights) == len(biases) == 3)
+        with self.assertRaises(AssertionError):
+            np.testing.assert_array_equal(weights[2], self.model.weights[1])
+        np.testing.assert_array_equal(weights[2], self.model.weights[2])
+        np.testing.assert_array_equal(biases[2], self.model.biases[2])
