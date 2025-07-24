@@ -10,9 +10,20 @@ from .nn_utils import he_initalization, one_hot_encode
 class MultiLayerPerceptron:
     """Neural network with the goal of classifying handwritten digits."""
 
-    def __init__(self, layer_sizes, rng=np.random.default_rng()) -> None:
-        """Initialize weights and biases"""
-        self.weights = [
+    def __init__(
+        self,
+        layer_sizes,
+        rng=np.random.default_rng(),
+        weights=None,
+        biases=None
+    ) -> None:
+        """Initialize weights and biases.
+
+        The model can be initialized with pre-defined weights and biases.
+        If not provided, a new set of weights and biases will be provided.
+        """
+
+        self.weights = weights or [
             he_initalization(
                 input_size,
                 output_size,
@@ -22,7 +33,7 @@ class MultiLayerPerceptron:
                 layer_sizes[1:]
             )
         ]
-        self.biases = [np.zeros(layer_size) for layer_size in layer_sizes[1:]]
+        self.biases = biases or [np.zeros(layer_size) for layer_size in layer_sizes[1:]]
         # The following lists will be used during forward pass and backpropagation
         self.z_vectors = []
         self.activations = []
