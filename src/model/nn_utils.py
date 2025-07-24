@@ -40,3 +40,21 @@ def normalize_image_data(x):
     would be much harder.
     """
     return x / 255
+
+def load_layer(source):
+    """Load layer parameters from an .npz file"""
+    data = np.load(source)
+    return (data['weights'], data['biases'])
+
+def load_parameters(source_dir='src/web/parameters/', layers=3):
+    """Load model parameters from .npz files.
+    Enables the web app to access the parameters optimized during training.
+    """
+    weights = []
+    biases = []
+    for layer in range(1, layers+1):
+        filename = source_dir + f'layer{layer}.npz'
+        weights_arr, biases_arr = load_layer(filename)
+        weights.append(weights_arr)
+        biases.append(biases_arr)
+    return (weights, biases)

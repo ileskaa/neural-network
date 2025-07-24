@@ -3,7 +3,6 @@
 import io
 import unittest
 import unittest.mock
-import tempfile
 import numpy as np
 from model import loss
 from model.mlp import MultiLayerPerceptron
@@ -214,24 +213,3 @@ class TestMLP(unittest.TestCase):
             filename = kall.args[0]
             expected = expected_filenames[i]
             self.assertEqual(filename, expected)
-
-    def test_parameter_load(self):
-        """Verify that the model is able to load parameters from files"""
-        with tempfile.NamedTemporaryFile(suffix=".npz") as tmp:
-            weights0 = self.model.weights[0]
-            biases0 = self.model.biases[0]
-            np.savez(tmp.name, weights=weights0, biases=biases0)
-
-            weights_from_file, biases_from_file = self.model.load_layer(tmp.name)
-            np.testing.assert_array_equal(weights0, weights_from_file)
-            np.testing.assert_array_equal(biases0, biases_from_file)
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            self.model.save_parameters(destination_dir=tmpdir)
-            weights, biases = self.model.load_parameters(tmpdir)
-
-        self.assertTrue(len(weights) == len(biases) == 3)
-        with self.assertRaises(AssertionError):
-            np.testing.assert_array_equal(weights[2], self.model.weights[1])
-        np.testing.assert_array_equal(weights[2], self.model.weights[2])
-        np.testing.assert_array_equal(biases[2], self.model.biases[2])

@@ -168,21 +168,3 @@ class MultiLayerPerceptron:
                 weights=self.weights[i],
                 biases=self.biases[i]
             )
-
-    def load_layer(self, source):
-        """Load layer parameters from an .npz file"""
-        data = np.load(source)
-        return (data['weights'], data['biases'])
-
-    def load_parameters(self, source_dir='src/web/parameters/', layers=3):
-        """Load model parameters from .npz files.
-        Enables the web app to access the parameters optimized during training.
-        """
-        weights = []
-        biases = []
-        for layer in range(1, layers+1):
-            filename = source_dir + f'layer{layer}.npz'
-            weights_arr, biases_arr = self.load_layer(filename)
-            weights.append(weights_arr)
-            biases.append(biases_arr)
-        return (weights, biases)
