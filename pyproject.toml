@@ -24,4 +24,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
 coverage = "^7.9.1"
+pylint = "^3.3.7"
 
+[tool.pylint."messages control"]
+disable = ["invalid-name", "too-many-locals", "too-many-arguments", "too-many-positional-arguments"]
