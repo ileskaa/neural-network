@@ -20,11 +20,15 @@
 
 <button class="submit">Submit</button>
 
+<div id="prediction"></div>
+
+<div id="pre-processed" style="margin-top: 10px;"></div>
+
 <script>
   const body = document.getElementsByTagName('body')[0]
   const canvas = document.getElementById('square')
   const ctx = canvas.getContext('2d')
-  ctx.lineWidth = 8
+  ctx.lineWidth = 20
   ctx.lineCap = 'round'
 
   let drawing = false
@@ -63,6 +67,36 @@
     ctx.lineTo(pos.x, pos.y)
     // Outline the current path with the current storke style
     ctx.stroke()
+  }
+
+  function displayPixels(pixels) {
+    const displayCanvas = document.createElement('canvas')
+    displayCanvas.width = displayCanvas.height = 28
+
+    const displayCtx = displayCanvas.getContext('2d')
+    // Create a blank ImageData object
+    const imageData = displayCtx.createImageData(28, 28)
+
+    // Fill imageData with pixel values
+    for (let i = 0; i < pixels.length; i++) {
+      const pixelValue = pixels[i]
+      // Multiply by 4 since every pixel has 4 values (RGBA)
+      const startIndex = i * 4
+
+      // Since we are working in grayscale, we can set R,G and B to the same value
+      imageData.data[startIndex] = pixelValue     // R
+      imageData.data[startIndex + 1] = pixelValue // G
+      imageData.data[startIndex + 2] = pixelValue // B
+      imageData.data[startIndex + 3] = 255        // A (no transparency)
+    }
+
+    // Paint data from ImageData object onto the canvas
+    displayCtx.putImageData(imageData, 0, 0)
+
+    const div = document.getElementById('pre-processed')
+    // Clear container to avoid stacking canvases
+    div.innerHTML = ''
+    div.appendChild(displayCanvas)
   }
 
   function getGrayscalePixels(canvas) {
@@ -107,7 +141,7 @@
       pixels.push(inverted)
     }
 
-    // Should normalize pixel values before submitting to server
+    displayPixels(pixels)
 
     return pixels
   }
