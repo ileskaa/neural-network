@@ -11,3 +11,4 @@ _Aineopintojen harjoitustyö: algoritmit ja tekoäly_, 2025
 
 - [Week 1](./docs/weekly-reports/week1.md)
 - [Week 2](./docs/weekly-reports/week2.md)
+- [Week 3](./docs/weekly-reports/week3.md)
