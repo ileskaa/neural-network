@@ -21,9 +21,8 @@ def index():
 def post():
     """Receives pixel values from the canvas and returns a prediction"""
     data = request.get_json()
-    print('pixels', data['digit'])
     pixel_values = data['digit']
     normalized = np.array(pixel_values) / 255
     pred = model.predict(normalized)
     print('pred', pred)
-    return str(pred)
+    return { "prediction": int(pred) }

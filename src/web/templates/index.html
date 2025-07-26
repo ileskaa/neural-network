@@ -122,14 +122,19 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
 
-  function getPrediction() {
+  async function getPrediction() {
     const pixels = getGrayscalePixels(canvas)
 
-    fetch('/predict', {
+    const result = await fetch('/predict', {
       method: 'POST',
       body: JSON.stringify({ digit: pixels }),
       headers: { "Content-type": "application/json" }
     })
+    const data = await result.json()
+    pred = data['prediction']
+
+    const predElement = document.getElementById('prediction')
+    predElement.innerText = pred
 
     clearCanvas()
   }

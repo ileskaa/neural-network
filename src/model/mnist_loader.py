@@ -22,7 +22,7 @@ def load_images(filepath):
         num_images = int.from_bytes(f.read(4))
         rows = int.from_bytes(f.read(4))
         cols = int.from_bytes(f.read(4))
-        # Read images. Each byte in an unsigned int in the range 0.255
+        # Read images. Each byte is an unsigned int in the range 0-255
         images = np.frombuffer(f.read(), dtype=np.uint8)
         # `ìmages` is currently a flat vector. We have to reshape it
         images = images.reshape(num_images, rows * cols)
