@@ -1,6 +1,7 @@
 """Implementation of the multilayer perceptron"""
 
 import time
+import json
 import numpy as np
 from .activations import relu, relu_derivative, softmax
 from .loss import cross_entropy, cross_entropy_gradient
@@ -161,14 +162,21 @@ class MultiLayerPerceptron:
         diff = end_time - start_time
         print(f"Elapsed time: {diff:.2f} seconds")
 
-    def measure_accuracy(self, x_test, y_test):
-        """Use test data to check the accuracy of the model"""
+    def measure_accuracy(self, x_test, y_test, save_result=True):
+        """Use test data to check the accuracy of the model.
+
+        Saves the measure accuracy in a JSON file, unless specified otherwise.
+        """
         n = len(x_test)
         predictions = self.predict(x_test)
         comparison = (predictions == y_test).astype(int)
         accuracy = sum(comparison)/n
         percents = accuracy * 100
         print(f"Accuracy on test data: {percents:.2f}%")
+        to_be_saved = { "accuracy": percents }
+        if save_result:
+            with open("src/web/parameters/accuracy.json", "w", encoding="utf-8") as file:
+                json.dump(to_be_saved, file)
 
     def save_parameters(self, destination_dir='src/web/parameters/'):
         """Save model parameters into a file.
