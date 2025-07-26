@@ -70,6 +70,16 @@
     const size = 28
     smallCanvas.width = smallCanvas.height = size
     const smallCtx = smallCanvas.getContext('2d')
+
+    // By default the canvas has no background. It is transparent.
+    // But MNIST consists of white strokes on black backgrounds.
+    // We therefore set a white background, so that we can later invert it to black
+    smallCtx.fillStyle = 'white'
+    smallCtx.fillRect(0, 0, size, size)
+
+    // Every pixel now has RGB values of 255, since every pixel is white.
+    // Each pixel alpha is also 255, since we don't have transparent pixels anymore.
+
     smallCtx.drawImage(canvas, 0, 0, size, size)
     const smallImageData = smallCtx.getImageData(
       0, 0, size, size
@@ -88,11 +98,13 @@
       const b = data[i + 2]
       const a = data[i + 3]
 
-      // This shouldn't log anything
-      if (r > 0 || g > 0 || b > 0)
-        console.log('RGB', r, g, b)
+      // According to W3C, this formula can be used to determine color brightness
+      const brightness = r * 0.299 + g * 0.587 + b * 0.114
 
-      pixels.push(a)
+      // Turn the background to black and the strokes to white (or at least whitish)
+      const inverted = 255 - brightness
+
+      pixels.push(inverted)
     }
 
     // Should normalize pixel values before submitting to server
