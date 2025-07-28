@@ -1,9 +1,16 @@
 html,
 body {
-  height: 100%;
   margin: 0;
   box-sizing: border-box;
   gap: 20px;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
 }
 
 h1 {
@@ -17,6 +24,7 @@ body {
   align-items: center;
   justify-content: center;
   font-family: 'Roboto', 'Inter', sans-serif;
+  background-color: #e6e6e6;
 }
 
 #header {
@@ -29,6 +37,22 @@ body {
 
 #square {
   border: solid;
+  margin-top: 5rem;
+  background-color: white;
+}
+
+#prediction {
+  font-size: 4rem;
+  font-weight: 500;
+  height: 4.75rem;
+}
+
+#pre-processed {
+  height: 1.75rem;
+}
+
+.hidden {
+  visibility: hidden;
 }
 
 button {

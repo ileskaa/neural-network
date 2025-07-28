@@ -21,9 +21,13 @@
 
 <button class="submit">Submit</button>
 
+<div class="hidden">Model output:</div>
+
 <div id="prediction"></div>
 
-<div id="pre-processed" style="margin-top: 10px;"></div>
+<div class="hidden">Pre-processed digit:</div>
+
+<div id="pre-processed" style="margin-top: 5px;"></div>
 
 <script>
   const body = document.getElementsByTagName('body')[0]
@@ -105,6 +109,11 @@
 
     const predElement = document.getElementById('prediction')
     predElement.innerText = pred
+   
+    // The collection must be turned to a static array for the for...of loop to work
+    const hiddenDivs = [...document.getElementsByClassName('hidden')]
+    for (const div of hiddenDivs)
+      div.classList.remove('hidden')
 
     clearCanvas()
   }
