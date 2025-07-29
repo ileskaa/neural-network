@@ -24,5 +24,4 @@ def post():
     pixel_values = data['digit']
     normalized = np.array(pixel_values) / 255
     pred = model.predict(normalized)
-    print('pred', pred)
-    return { "prediction": int(pred) }
+    return {"prediction": int(pred)}
