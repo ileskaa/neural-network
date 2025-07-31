@@ -134,6 +134,76 @@ class MultiLayerPerceptron:
             return np.argmax(y_pred, axis=1)
         return np.argmax(y_pred)
 
+    def shuffle_data(self, x, y):
+        """Introduce stochasticity by shuffling your data"""
+        num_samples = x.shape[0]
+        permutated_indexes = np.random.permutation(num_samples)
+        x_shuffled = x[permutated_indexes]
+        y_shuffled = y[permutated_indexes]
+        return (x_shuffled, y_shuffled)
+
+    def adam(self, x, y, f, theta, alpha=0.001, beta1=0.9, beta2=0.999, batch_size=64):
+        """Implementaion of the adaptive moment estimation (Adam) optimization algorithm.
+
+        Explanation of parameters:
+        - alpha: stepsize
+        - beta 1 and beta 2: exponential decay rates for the moment estimates.
+          These are defined within a range of [0, 1)
+        - f: stochastic objective function which takes a parameter vector theta as argument
+        - theta: initial parameter vector
+
+        Explanation of some terms:
+        - first moment: expected value, or mean, of a distribution
+        - second raw moment: mean of the squared values of a random variable.
+          Measures how spread out a distribution is
+        """
+        # First moment vector
+        m = 0
+        # Second moment vector
+        v = 0
+
+        # initial timestep
+        t = 0
+
+        # Once we get below this, we can consider the parameters have converged
+        loss_goal = 0.05
+        # Initialize loss with a high value
+        loss = 1
+
+        epsilon = 10e-8
+
+        num_layers = len(self.weights)
+        num_samples = x.shape[0]
+        while loss > loss_goal:
+            t += 1
+            x_shuffled, y_shuffled = self.shuffle_data(x, y)
+            for start in range(0, num_samples, batch_size):
+                end = start + batch_size
+                x_batch = x_shuffled[start:end]
+                y_batch = x_shuffled[start:end]
+
+                y_pred = self.forward(x_batch)
+                gradients_w, gradients_b = self.backprop(y)
+
+                # TODO Implement loop to handle both weight and bias gradients
+                # Perform for each parameter, meaning for each weight matrix and vias vector
+                for layer in range(num_layers):
+                    gradient = gradients_w[layer]
+                    gradient_b = gradients_b[layer]
+                    # Update biased first moment estimates
+                    m = beta1 * m + (1-beta1) * gradient
+                    # Update biased second raw moment estimates
+                    v = beta2 * v + (1-beta2) * gradient**2
+                    # Compute bias corrected 1st moment estimates
+                    m = m / (1 - beta1**t)
+                    # Compute bias corrected 2nd raw moment estimates
+                    v = v / (1 - beta2**t)
+                    # Update parameters
+                    theta = theta - alpha*m / (np.sqrt(v)+epsilon)
+
+            # Get gradients with respect to the stochastic objective at timestep t
+            # gt =
+
     def train(
         self,
         x_train,
@@ -159,15 +229,13 @@ class MultiLayerPerceptron:
         num_samples = x_train.shape[0]
 
         for epoch in range(epochs):
-            permutated_indexes = np.random.permutation(num_samples)
-            x_shuffled = x_train[permutated_indexes]
-            y_shuffled = y_train[permutated_indexes]
+            x_shuffled, y_shuffled = self.shuffle_data(x_train, y_train)
 
             epoch_loss = 0
 
             for start in range(0, num_samples, batch_size):
                 # Avoid exceeding the max range
-                end = min(start+batch_size, num_samples)
+                end = start + batch_size
                 x_batch = x_shuffled[start:end]
                 y_pred = self.forward(x_batch)
                 y_batch_true = y_shuffled[start:end]

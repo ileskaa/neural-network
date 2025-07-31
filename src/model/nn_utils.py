@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 # Enable dependency injection for the RNG
 def he_initalization(fan_in, fan_out, rng=np.random.default_rng()):
     """He initialization is useful when working with ReLU activations.
@@ -15,10 +16,12 @@ def he_initalization(fan_in, fan_out, rng=np.random.default_rng()):
     std = np.sqrt(2 / fan_in)
     return rng.normal(0, std, size=(fan_in, fan_out))
 
+
 def one_hot_encode(y):
     """One hot encodes digits"""
     class_count = 10
     return np.eye(class_count)[y]
+
 
 def verify_one_hot_encoding(y):
     """Verify that the given input is one-hot encoded"""
@@ -33,6 +36,7 @@ def verify_one_hot_encoding(y):
         if not np.isclose(single_sum, 1):
             raise ValueError("Not a one-hot encoded value")
 
+
 def normalize_image_data(x):
     """Normalize pixel values to scale them down to [0, 1].
     This prevents oscillation and overshooting during gradient descent.
@@ -41,10 +45,12 @@ def normalize_image_data(x):
     """
     return x / 255
 
+
 def load_layer(source):
     """Load layer parameters from an .npz file"""
     data = np.load(source)
     return (data['weights'], data['biases'])
+
 
 def load_parameters(source_dir='src/web/parameters/', layers=3):
     """Load model parameters from .npz files.
