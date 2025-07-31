@@ -4,7 +4,8 @@ from .mlp import MultiLayerPerceptron
 from .mnist_loader import load_data
 from .nn_utils import normalize_image_data
 
-if __name__ == "__main__":
+
+def main():
     (x_train, y_train), (x_test, y_test) = load_data()
     x_train = normalize_image_data(x_train)
     x_test = normalize_image_data(x_test)
@@ -21,7 +22,7 @@ if __name__ == "__main__":
     # model = MultiLayerPerceptron(layers)
     # model.train(x_train, y_train, epochs=20, learning_rate=0.025, batch_size=92)
 
-    # Was able to hit 97.63% accuracy. Test data was not even normalized
+    # Was able to hit 97.81% accuracy on normalized data, in 20 epochs
     layers = [784, 384, 128, 10]
     model = MultiLayerPerceptron(layers)
     model.train(x_train, y_train, epochs=epochs, learning_rate=0.02, batch_size=64)
@@ -44,4 +45,8 @@ if __name__ == "__main__":
     model.measure_accuracy(x_test, y_test)
 
     # Save weights and biases into .npz files
-    model.save_parameters()
+    # model.save_parameters()
+
+
+if __name__ == "__main__":
+    main()

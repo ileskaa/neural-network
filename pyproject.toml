@@ -29,3 +29,6 @@ pylint = "^3.3.7"
 
 [tool.pylint."messages control"]
 disable = ["invalid-name", "too-many-locals", "too-many-arguments", "too-many-positional-arguments"]
+
+[tool.poetry.scripts]
+trainmodel = "src.model.main:main"
