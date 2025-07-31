@@ -16,7 +16,9 @@ class MultiLayerPerceptron:
         layer_sizes=None,
         rng=np.random.default_rng(),
         weights=None,
-        biases=None
+        biases=None,
+        x_train=None,
+        y_train=None
     ) -> None:
         """Initialize weights and biases.
 
@@ -38,6 +40,8 @@ class MultiLayerPerceptron:
             )
         ]
         self.biases = biases or [np.zeros(layer_size) for layer_size in layer_sizes[1:]]
+        self.x_train = x_train
+        self.y_train = y_train
         # The following lists will be used during forward pass and backpropagation
         self.z_vectors = []
         self.activations = []
@@ -64,6 +68,25 @@ class MultiLayerPerceptron:
             self.activations.append(output)
         final_output = self.activations[-1]
         return final_output
+
+    def batch_forward(self, x):
+        """Feedforward method that supports batches.
+        Useful for the Adam optimizer.
+        """
+        n = len(self.weights)
+        output = None
+        for layer in range(n):
+            w_matrix = self.weights[layer]
+            b_vector = self.biases[layer]
+            # Linear transformation
+            z = np.matmul(x, w_matrix) + b_vector
+            if layer == n-1:
+                output = softmax(z)
+            else:
+                output = relu(z)
+            # The output will be fed to the next layer
+            x = output
+        return output
 
     def backprop(self, y_true, learning_rate=0.01):
         """Backpropagation method.
@@ -173,7 +196,7 @@ class MultiLayerPerceptron:
         accuracy = sum(comparison)/n
         percents = accuracy * 100
         print(f"Accuracy on test data: {percents:.2f}%")
-        to_be_saved = { "accuracy": percents }
+        to_be_saved = {"accuracy": percents}
         if save_result:
             with open("src/web/parameters/accuracy.json", "w", encoding="utf-8") as file:
                 json.dump(to_be_saved, file)

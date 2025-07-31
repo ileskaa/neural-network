@@ -61,9 +61,8 @@ class TestMLP(unittest.TestCase):
             return self.rng.integers(low, high, num_pixels)
         return self.rng.integers(low, high, size=(num_images, num_pixels))
 
-    def gen_y_sample(self):
+    def gen_y_sample(self, num_digits=100):
         """Generate a random sample of digits"""
-        num_digits = 100
         low = 0
         high = 10
         return self.rng.integers(low, high, size=num_digits)
@@ -87,6 +86,12 @@ class TestMLP(unittest.TestCase):
         # The activation list should contain 4 values
         # since it also stores the network input
         self.assertEqual(len(self.model.activations), 4)
+
+    def test_batch_forward(self):
+        """Verify that the batch-based feedforward works"""
+        x = self.gen_x_sample(out_type='vector', num_images=64)
+        y_pred = self.model.batch_forward(x)
+        self.assertEqual(x.shape[0], y_pred.shape[0])
 
     def test_backprop(self):
         """Backpropagation tests.
