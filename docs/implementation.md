@@ -7,6 +7,7 @@ This project has essentially two parts: the neural network on one side, and a we
 ### Neural Network
 
 This is definitely the most important part of the project, since it contains the actual implementation of the model. It can be found in `src/model/`. Here's a breakdown of the files:
+
 - `activations.py`
 - `loss.py`
 - `main.py`
@@ -19,6 +20,7 @@ Then within `src/model/`, there is also the `tests/` directory which contains al
 ### Web App
 
 The web app is a way to showcase the trained network in action. It is located in the `src/web/` directory. Here's a breakdown of its content:
+
 - `parameters/`
 - `static/`
 - `templates/`
@@ -47,6 +49,7 @@ I mostly used text-based web documents, but some videos also proved useful.
 - [Quickstart (Flask)](https://flask.palletsprojects.com/en/stable/quickstart/)
 - [Deploying to Production (Flask)](https://flask.palletsprojects.com/en/stable/deploying/)
 - [Adam: a Method for Stochastic Optimization](https://arxiv.org/pdf/1412.6980)
+- [Adam Optimizer Tutorial: Intuition and Implementation in Python](https://www.datacamp.com/tutorial/adam-optimizer-tutorial)
 
 ### Videos
 
