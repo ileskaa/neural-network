@@ -87,10 +87,9 @@ class TestMLP(unittest.TestCase):
         # since it also stores the network input
         self.assertEqual(len(self.model.activations), 4)
 
-    def test_batch_forward(self):
-        """Verify that the batch-based feedforward works"""
+        # Verify that the feedforward also works with batches
         x = self.gen_x_sample(out_type='vector', num_images=64)
-        y_pred = self.model.batch_forward(x)
+        y_pred = self.model.forward(x)
         self.assertEqual(x.shape[0], y_pred.shape[0])
 
     def test_backprop(self):
@@ -125,7 +124,7 @@ class TestMLP(unittest.TestCase):
         # Weights and biases should be updated after backpropagation
         inital_weights = [w.copy() for w in self.model.weights]
         initial_biases = [b.copy() for b in self.model.biases]
-        self.model.backprop(y_true)
+        (w_gradients, b_gradients) = self.model.backprop(y_true)
         weights_after = self.model.weights
         biases_after = self.model.biases
         n = len(inital_weights)
@@ -142,6 +141,9 @@ class TestMLP(unittest.TestCase):
             output_after_backprop
         )
         self.assertTrue(cross_entropy_after_backprop < cross_entropy)
+
+        # Verify that backprop() returned lists of gradients
+        self.assertTrue(len(w_gradients) == len(b_gradients) == n)
 
     def test_predict(self):
         """Tests for the networks digit prediction method.

@@ -4,10 +4,12 @@
 
 Go to the project root and use `poetry run pytest src` to run unit tests.
 
-Use   
-```
+Use
+
+```bash
 poetry run bash -c "coverage run --branch -m pytest src && coverage report -m"
 ```
+
 to get a coverage report in your terminal.
 
 ## Performance in Training
@@ -20,7 +22,11 @@ to get a coverage report in your terminal.
 | [784, 512, 128, 10] | Between 46.2 and 64.5 seconds |
 | [784, 256, 128, 10] | Between 24.8 and 31.2 seconds |
 
-As I expected, when writing about time complexity in my project specification, training time decreases significantly when reducing the size of the first hidden layer. The reason is that heaviest matrix multiplications happen at the first hidden layer, given that the input layer, which is typically the largest of layers, feeds into it.
+As I expected, when writing about time complexity in my project specification,
+training time decreases significantly when reducing the size of the first hidden layer.
+The reason is that heaviest matrix multiplications happen at the first hidden layer,
+given that the input layer, which is typically the largest of layers, feeds into it.
 
 A batch size of 64 seems to yield better results than a batch size of 128.
 Was able to hit a 97% accuracy in 20 epochs with a learning rate of 0.014.
+

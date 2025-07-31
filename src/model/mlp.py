@@ -48,7 +48,8 @@ class MultiLayerPerceptron:
 
     def forward(self, network_input):
         """The forward pass of the neural network.
-        Will return a numpy array of size 10.
+        For each digit, will return an array of size 10.
+        Hence the output will have shape (num_digits, 10)
         """
         n = len(self.weights)
         # Reset activations and z vectors at each forward pass
@@ -69,32 +70,26 @@ class MultiLayerPerceptron:
         final_output = self.activations[-1]
         return final_output
 
-    def batch_forward(self, x):
-        """Feedforward method that supports batches.
-        Useful for the Adam optimizer.
-        """
-        n = len(self.weights)
-        output = None
-        for layer in range(n):
-            w_matrix = self.weights[layer]
-            b_vector = self.biases[layer]
-            # Linear transformation
-            z = np.matmul(x, w_matrix) + b_vector
-            if layer == n-1:
-                output = softmax(z)
-            else:
-                output = relu(z)
-            # The output will be fed to the next layer
-            x = output
-        return output
-
     def backprop(self, y_true, learning_rate=0.01):
         """Backpropagation method.
-
         Updates all weights and biases in a way that minimizes the loss function.
+
+        Explanation of some variables:
+        - dL_dz: loss function gradient with respect to pre-activation vector (AKA z-vector)
+        - dz_dW: z-vector gradient w.r.t. weights
+        - dz_db: z-vector gradient w.r.t. biases
+        - dL_db: loss function gradient w.r.t. biases
+        - dz_da: z-vector gradient w.r.t. previous layer's activations,
+          i.e., activation function outputs
+        - dL_da: loss function gradient w.r.t. activations
+        - da_dz: activation vector gradient w.r.t. z-vector
         """
         y_hot_encoded = one_hot_encode(y_true)
         y_pred = self.activations[-1]
+        # Initialize lists to save the gradients
+        W_gradients = []
+        b_gradients = []
+
         # cross_entropy_gradient() returns a gradient normalized by batch size
         dL_dz = cross_entropy_gradient(y_pred, y_hot_encoded)
 
@@ -108,8 +103,11 @@ class MultiLayerPerceptron:
             # Update weights and biases. Remember learning rate
             self.weights[layer] -= dL_dW * learning_rate
             self.biases[layer] -= dL_db * learning_rate
+            W_gradients.append(dL_dW)
+            b_gradients.append(dL_db)
 
-            # Compute gradient for preceding layer, if it's not the input layer
+            # Compute loss gradient w.r.t. the pre-activation vector, for preceding layer.
+            # Except if that preceding layer is the input layer
             if layer > 0:
                 # Can overflow if the learning rate is too high
                 dz_da = self.weights[layer]
@@ -117,6 +115,9 @@ class MultiLayerPerceptron:
                 z = self.z_vectors[layer-1]
                 da_dz = relu_derivative(z)
                 dL_dz = dL_da * da_dz
+
+        # Returning the gradients allows us to use them in the Adam optimizer
+        return (W_gradients, b_gradients)
 
     def predict(self, x):
         """Takes in an image or a vector of images in pixel values
