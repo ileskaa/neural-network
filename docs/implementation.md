@@ -40,7 +40,7 @@ I mostly used text-based web documents, but some videos also proved useful.
 
 ### Documents
 
-- [Weight initilization (Wikipedia)](https://en.wikipedia.org/wiki/Weight_initialization)
+- [Weight initialization (Wikipedia)](https://en.wikipedia.org/wiki/Weight_initialization)
 - [Rectifier (neural networks) (Wikipedia)](https://en.wikipedia.org/wiki/Rectifier_(neural_networks))
 - [Softmax function (Wikipedia)](https://en.wikipedia.org/wiki/Softmax_function)
 - [Cross-entropy (Wikipedia)](https://en.wikipedia.org/wiki/Cross-entropy)
