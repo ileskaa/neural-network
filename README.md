@@ -5,6 +5,7 @@ _Aineopintojen harjoitustyö: algoritmit ja tekoäly_, 2025
 ## Documentation
 
 - [Project specification](./docs/project-spec.md)
+- [User guide](/docs/user-guide.md)
 - [Testing report](./docs/testing.md)
 - [Implementation document](./docs/implementation.md)
 
