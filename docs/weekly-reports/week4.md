@@ -17,21 +17,21 @@ I had some small issues during deployment, like the default Gunicorn port not ma
 The link to the deployed app can be found in the [user guide](../user-guide.md).
 
 I also began working on the implementation documentation, since I thought it would
-be quite painful to write the whole thing at in one go the end of the project.
-I might also be hard to remember all the references that have been used at this point.
+be quite painful to write the whole thing in one go at the end of the project.
+It also could've been hard to remember all the references that have been used at that point.
 
-Finally, I started implementing the Adam optimizer. With stochastic gradient descent (SGD), I haven't been able to pass the 98% mark on MNIST's test dataset.
+Finally, I started implementing the Adam optimizer. With stochastic gradient descent (SGD), I haven't been able to pass the 98% mark on MNIST's test dataset. At least not in 20 epochs.
 With Adam, my goal is to pass that benchmark.
 
-Estimated workload:
+Estimated workload: 13 hours
 
 ## Challenges
 
-The Adam optimizer doesn't feel like the easiest algorithm. Thankfully I found this [paper](https://www.datacamp.com/tutorial/adam-optimizer-tutorial) which gives a clear description of the algorithm. I definitely made some progress on the algorithm, but we'll find out soon enough if I'm able to train my model using it.
+The Adam optimizer doesn't feel like the easiest algorithm. Thankfully I found this [paper](https://www.datacamp.com/tutorial/adam-optimizer-tutorial) which gives a clear description of the algorithm. I definitely made some progress on the optimizer, but we'll find out soon enough if I'm able to properly train a model using it.
 
 ## What I Learned
 
-The biggest thing was learning about the aforementioned Adam algorithm. What makes it really interesting compared to basic SGD, is that the rate at which it updates model parameters changes during the training process. Typically, the learning tends to slow down the further epochs we run. Adam aims to compensate for this by adjusting the learning rate at each training cycle, which should allow the model to converge faster than with classic SGD.
+The biggest thing was learning about the aforementioned Adam algorithm. What makes it really interesting compared to basic SGD, is that the rate at which it updates model parameters changes during the training process. Typically, the learning tends to slow down as we cycle through epochs. Adam aims to compensate for this by adjusting the learning rate at each training cycle, which should allow the model to converge faster than with classic SGD.
 
 ## Next Steps
 
