@@ -50,6 +50,8 @@ I mostly used text-based web documents, but some videos also proved useful.
 - [Deploying to Production (Flask)](https://flask.palletsprojects.com/en/stable/deploying/)
 - [Adam: a Method for Stochastic Optimization](https://arxiv.org/pdf/1412.6980)
 - [Adam Optimizer Tutorial: Intuition and Implementation in Python](https://www.datacamp.com/tutorial/adam-optimizer-tutorial)
+- [The MNIST database of handwritten digits](https://web.archive.org/web/20200430193701/http://yann.lecun.com/exdb/mnist/)
+- [Dataset Card for MNIST](https://huggingface.co/datasets/ylecun/mnist)
 
 ### Videos
 
