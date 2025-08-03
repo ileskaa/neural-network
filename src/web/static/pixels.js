@@ -3,8 +3,8 @@
 // Create prototype to avoid redundancy
 const canvasPrototype = {
   // Method to draw an image on the HTML canvas
-  drawImage(canvas, dx=0, dy=0) {
-    this.ctx.drawImage(canvas, dx, dy, this.size, this.size)
+  drawImage(canvas, dx = 0, dy = 0, size = this.size) {
+    this.ctx.drawImage(canvas, dx, dy, size, size)
   },
 
   // Return object representing the underlying pixel data of the canvas
@@ -40,6 +40,7 @@ function Canvas(size = 28) {
 // Assign methods to the constructor function's prototype
 Object.assign(Canvas.prototype, canvasPrototype)
 
+// Display pre-processed digit
 function displayPixels(pixels) {
   const canvas = new Canvas()
 
@@ -137,10 +138,76 @@ function getShiftedPixels(canvas, shiftX, shiftY) {
   return pixels
 }
 
+function extractPixelData(canvasElement) {
+  const ctx = canvasElement.getContext('2d')
+  const size = canvasElement.height
+  const imageData = ctx.getImageData(0, 0, size, size)
+  return imageData.data
+}
+
+function getBoundingBox(pixels) {
+  // There are 280*280 pixels and 4 values for each pixel (RGBA) 
+  const size = Math.sqrt(pixels.length / 4)
+  let minX = size - 1
+  let minY = size - 1
+  let maxX = 0
+  let maxY = 0
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const index = (y * size + x) * 4
+      const alpha = pixels[index + 3]
+      // If the pixel is non-transparent, something has been drawn on it
+      if (alpha > 0) {
+        minX = Math.min(minX, x)
+        minY = Math.min(minY, y)
+        maxX = Math.max(maxX, x)
+        maxY = Math.max(maxY, y)
+      }
+    }
+  }
+  const width = maxX - minX
+  const height = maxY - minY
+  const boundedRectSize = Math.max(height, width)
+  console.log('boundedRectSize:', boundedRectSize)
+  return { minX, minY, width, height }
+}
+
+function makeClippedCanvas(canvas, minX, minY, width, height) {
+  const size = Math.max(width, height)
+  const clippedCanvasElt = document.createElement('canvas')
+  clippedCanvasElt.width = clippedCanvasElt.height = size
+  const clippedCtx = clippedCanvasElt.getContext('2d')
+
+  const offsetX = (size - width) / 2
+  const offsetY = (size - height) / 2
+
+  clippedCtx.drawImage(
+    canvas, minX, minY, width, height, offsetX, offsetY, width, height
+  )
+  return clippedCanvasElt
+}
+
+function resizeCanvas(canvasElt, size) {
+  const smallCanvasElt = document.createElement('canvas')
+  smallCanvasElt.width = smallCanvasElt.height = size
+  const smallCtx = smallCanvasElt.getContext('2d')
+  smallCtx.drawImage(canvasElt, 0, 0, size, size)
+  return smallCanvasElt
+}
+
 function getGrayscalePixels(canvas) {
+  const pixelData = extractPixelData(canvas)
+  const { minX, minY, width, height } = getBoundingBox(pixelData)
+  const clippedCanvasElt = makeClippedCanvas(canvas, minX, minY, width, height)
+  const smallCanvasElt = resizeCanvas(clippedCanvasElt, 20)
+
+  // Create the 28x28 px canvas. We'll put the 20x20 px canvas inside it.
+  // This matches the MNIST dataset's processing
   const smallCanvas = new Canvas()
 
-  smallCanvas.drawImage(canvas, 0, 0)
+  const offset = 4
+  const boundedSize = 20
+  smallCanvas.drawImage(canvas, offset, offset, boundedSize, boundedSize)
 
   const size = smallCanvas.size
 
@@ -156,7 +223,6 @@ function getGrayscalePixels(canvas) {
 
   xCenter = Math.round(xCenter)
   yCenter = Math.round(yCenter)
-
   console.log('xCenter, yCenter', xCenter, yCenter)
 
   const shiftX = size / 2 - xCenter
