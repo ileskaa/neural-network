@@ -27,7 +27,7 @@ Estimated workload: 13 hours
 
 ## Challenges
 
-The Adam optimizer doesn't feel like the easiest algorithm. Thankfully I found this [paper](https://www.datacamp.com/tutorial/adam-optimizer-tutorial) which gives a clear description of the algorithm. I definitely made some progress on the optimizer, but we'll find out soon enough if I'm able to properly train a model using it.
+The Adam optimizer doesn't feel like the easiest algorithm. Thankfully I found this [paper](https://arxiv.org/pdf/1412.6980) which gives a clear description of the algorithm. I definitely made some progress on the optimizer, but we'll find out soon enough if I'm able to properly train a model using it.
 
 ## What I Learned
 
