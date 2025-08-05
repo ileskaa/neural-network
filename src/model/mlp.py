@@ -23,7 +23,7 @@ class MultiLayerPerceptron:
         """Initialize weights and biases.
 
         The model can be initialized with pre-defined weights and biases.
-        If not provided, a new set of weights and biases will be provided.
+        If not provided, a new set of weights and biases will be generated.
         """
 
         if layer_sizes is None:
@@ -70,7 +70,31 @@ class MultiLayerPerceptron:
         final_output = self.activations[-1]
         return final_output
 
-    def backprop(self, y_true, learning_rate=0.01):
+    def clip_gradient(self, gradient: np.ndarray, max_norm: float = 1.3):
+        """Clip gradients that are at risk of growing too large.
+
+        If the learning rate is high, the training process might end up generating
+        some very large gradients, which can cause overflow errors during matrix
+        multiplications. By bounding gradients to a reasonable range, we can
+        avoid those errors.
+        The need for gradient clipping will be based on the gradient's L2 norm,
+        AKA the Euclidean norm.
+
+        If the max_norm is set too high, the clipping won't be much help at all
+        since it will allow gradients to grow very large, which at some point might cause
+        the loss score to start increasing dramatically. That would be the opposite
+        of what we want.
+
+        Returns a numpy array consisting of the clipped gradient.
+        """
+        gradient_norm = np.sqrt(np.sum(gradient**2))
+        if gradient_norm > max_norm:
+            epsilon = 1e-8
+            # We add epsilon to make sure we don't divide by zero
+            gradient = gradient * (max_norm / (gradient_norm + epsilon))
+        return gradient
+
+    def backprop(self, y_true: np.ndarray, learning_rate=0.01):
         """Backpropagation method.
         Updates all weights and biases in a way that minimizes the loss function.
 
@@ -100,6 +124,9 @@ class MultiLayerPerceptron:
             dL_dW = np.matmul(dz_dW.T, dL_dz)
             dz_db = 1
             dL_db = dz_db * np.sum(dL_dz, axis=0)
+            # Clip gradients if their norm becomes too high
+            dL_dW = self.clip_gradient(dL_dW)
+            dL_db = self.clip_gradient(dL_db)
             # Update weights and biases. Remember learning rate
             self.weights[layer] -= dL_dW * learning_rate
             self.biases[layer] -= dL_db * learning_rate

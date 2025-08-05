@@ -26,7 +26,7 @@ def main():
     you might get really long training cycles.
 
     The `epochs` variable corresponds to the number of training cycles.
-    With more training cycles you will usually end up with more accurate mode,
+    With more training cycles you will usually end up with a more accurate model,
     but training will take longer. There is always a trade-off, right?
     """
     (x_train, y_train), (x_test, y_test) = load_data()

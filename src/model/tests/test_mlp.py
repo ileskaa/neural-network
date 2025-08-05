@@ -161,6 +161,21 @@ class TestMLP(unittest.TestCase):
         self.assertIsInstance(y_pred, np.ndarray)
         self.assertTrue(np.issubdtype(y_pred.dtype, np.int64))
 
+    def test_gradient_clipping(self):
+        """Verify that large gradients get clipped"""
+
+        fake_gradient = self.rng.normal(scale=0.1, size=100)
+        clipped_gradient = self.model.clip_gradient(fake_gradient)
+        self.assertEqual(fake_gradient.shape, clipped_gradient.shape)
+
+        # If the gradient's L2 norm is low, should return the same gradient
+        np.testing.assert_equal(fake_gradient, clipped_gradient)
+
+        # With a higher norm, the gradient should be different
+        fake_grad2 = self.rng.normal(scale=1, size=100)
+        clipped_grad2 = self.model.clip_gradient(fake_grad2)
+        self.assertFalse(np.array_equal(fake_grad2, clipped_grad2))
+
     # The patch decorator patches a target with a new object.
     # For this test, we'll patch the standard ouput with the StringIO method,
     # which will allow us to test if the training method prints the expected strings.
