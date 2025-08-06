@@ -28,6 +28,14 @@ class TestMLP(unittest.TestCase):
         self.rng = np.random.default_rng(84)
         self.model = MultiLayerPerceptron(layer_sizes, self.rng)
 
+    def test_defaults(self):
+        """Verify the model is initialized with default values when no
+        parameters are provided.
+        """
+        model = MultiLayerPerceptron()
+        self.assertTrue(len(model.weights) > 2)
+        self.assertTrue(len(model.biases) > 2)
+
     def test_initialization(self):
         """Testing weight and bias initialization.
 
