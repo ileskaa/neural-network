@@ -1,6 +1,10 @@
 # Testing Report
 
-## Unit tests
+The web app has been left out of the scope of testing.
+
+## Automatic Testing
+
+### Unit tests
 
 Go to the project root and use `poetry run pytest src` to run unit tests.
 
@@ -11,6 +15,10 @@ poetry run bash -c "coverage run --branch -m pytest src && coverage report -m"
 ```
 
 to get a coverage report in your terminal.
+
+### Integration Tests
+
+Integration tests are implemented in `/src/model/tests/integration_test.py`
 
 ## Performance in Training
 
@@ -29,4 +37,3 @@ given that the input layer, which is typically the largest of layers, feeds into
 
 A batch size of 64 seems to yield better results than a batch size of 128.
 Was able to hit a 97% accuracy in 20 epochs with a learning rate of 0.014.
-

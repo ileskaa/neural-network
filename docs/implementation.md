@@ -52,6 +52,7 @@ I mostly used text-based web documents, but some videos also proved useful.
 - [Adam Optimizer Tutorial: Intuition and Implementation in Python](https://www.datacamp.com/tutorial/adam-optimizer-tutorial)
 - [The MNIST database of handwritten digits](https://web.archive.org/web/20200430193701/http://yann.lecun.com/exdb/mnist/)
 - [Dataset Card for MNIST](https://huggingface.co/datasets/ylecun/mnist)
+- [Writing automated tests for neural networks](https://www.sebastianbjorkqvist.com/blog/writing-automated-tests-for-neural-networks/)
 
 ### Videos
 
