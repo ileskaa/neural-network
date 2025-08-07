@@ -1,5 +1,6 @@
 """Integration tests for the neural network"""
 
+import copy
 import unittest
 import numpy as np
 from model.mlp import MultiLayerPerceptron
@@ -13,26 +14,58 @@ class TestModel(unittest.TestCase):
         layer_sizes = [784, 256, 128, 10]
         self.rng = np.random.default_rng(63)
         self.model = MultiLayerPerceptron(layer_sizes, self.rng)
-
-    def test_network_overfits_small_dataset(self):
-        """On a small dataset, the network should be able to achieve
-        a classification accuracy of 100%"""
         l_bound = 0
         u_bound_exclusive = 256
         sample_size = 20
         num_pixels = 784
         x_sample = self.rng.integers(
-            l_bound,
-            u_bound_exclusive,
-            size=(sample_size, num_pixels)
+            l_bound, u_bound_exclusive, size=(sample_size, num_pixels)
         )
         # Normalize pixel values
-        x_sample = x_sample / 255
-        y_sample = self.rng.integers(0, 10, sample_size)
+        self.x_sample = x_sample / 255
+        self.y_sample = self.rng.integers(0, 10, sample_size)
+
+    def test_network_overfits_small_dataset(self):
+        """On a small dataset, the network should be able to achieve
+        a classification accuracy of 100%"""
         self.model.train(
-            x_sample, y_sample, epochs=15, batch_size=2,
-            learning_rate=0.02
+            self.x_sample, self.y_sample, epochs=15, batch_size=2, learning_rate=0.02
         )
-        accuracy = self.model.measure_accuracy(x_sample, y_sample)
+        accuracy = self.model.measure_accuracy(self.x_sample, self.y_sample)
         # The model should fit the data perfectly
         self.assertEqual(accuracy, 100)
+
+    def test_all_layers_change(self):
+        """Ensure all layers get updated during a training cycle"""
+        # Create deep copy of parameter lists
+        initial_weights = copy.deepcopy(self.model.weights)
+        initial_biases = copy.deepcopy(self.model.biases)
+        self.model.train(self.x_sample, self.y_sample, epochs=1, batch_size=2)
+        weight_after = self.model.weights
+        biases_after = self.model.biases
+        num_layers = len(initial_weights)
+        for layer in range(num_layers):
+            are_weights_equal = np.array_equal(
+                initial_weights[layer], weight_after[layer]
+            )
+            are_biases_equal = np.array_equal(
+                initial_biases[layer], biases_after[layer]
+            )
+            self.assertFalse(are_weights_equal)
+            self.assertFalse(are_biases_equal)
+
+    def test_single_vs_batch(self):
+        """Ensure the output is the same regardless of whether the input was
+        given as part of a minibatch or as a single sample.
+        """
+        # Create another model to avoid messing with previous tests
+        rng = np.random.default_rng(21)
+        model = MultiLayerPerceptron(rng=rng)
+        y_pred = model.forward(self.x_sample)
+        y_pred2 = []
+        for x in self.x_sample:
+            pred = model.forward(x)
+            y_pred2.append(pred)
+        y_pred2 = np.array(y_pred2)
+        self.assertEqual(y_pred.shape, y_pred2.shape)
+        np.testing.assert_array_almost_equal(y_pred, y_pred2)
