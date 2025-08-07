@@ -164,7 +164,7 @@ class MultiLayerPerceptron:
     def shuffle_data(self, x, y):
         """Introduce stochasticity by shuffling your data"""
         num_samples = x.shape[0]
-        permutated_indexes = np.random.permutation(num_samples)
+        permutated_indexes = self.rng.permutation(num_samples)
         x_shuffled = x[permutated_indexes]
         y_shuffled = y[permutated_indexes]
         return (x_shuffled, y_shuffled)

@@ -58,7 +58,6 @@ class TestModel(unittest.TestCase):
         """Ensure the output is the same regardless of whether the input was
         given as part of a minibatch or as a single sample.
         """
-        # Create another model to avoid messing with previous tests
         rng = np.random.default_rng(21)
         model = MultiLayerPerceptron(rng=rng)
         y_pred = model.forward(self.x_sample)

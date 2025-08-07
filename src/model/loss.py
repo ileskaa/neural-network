@@ -3,6 +3,7 @@
 import numpy as np
 from .nn_utils import verify_one_hot_encoding
 
+
 def cross_entropy(y_true, y_pred):
     """Cross-entropy loss function.
 
@@ -34,11 +35,9 @@ def cross_entropy(y_true, y_pred):
 
     if y_true.ndim > 1:
         # For batches, we mean across samples to get a single value
-        return -np.mean(
-            np.sum(y_true * np.log(y_pred),
-            axis=1)
-        )
+        return -np.mean(np.sum(y_true * np.log(y_pred), axis=1))
     return -np.sum(y_true * np.log(y_pred))
+
 
 def cross_entropy_gradient(y_pred, y_true):
     """Gradient of loss function w.r.t. pre-softmax values.
