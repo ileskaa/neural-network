@@ -1,11 +1,11 @@
 """Implementation of the multilayer perceptron"""
 
 import time
-import json
 import numpy as np
 from .activations import relu, relu_derivative, softmax
 from .loss import cross_entropy, cross_entropy_gradient
 from .nn_utils import he_initalization, one_hot_encode
+from .layer import Layer
 
 
 class MultiLayerPerceptron:
@@ -18,7 +18,7 @@ class MultiLayerPerceptron:
         weights=None,
         biases=None,
         x_train=None,
-        y_train=None
+        y_train=None,
     ) -> None:
         """Initialize weights and biases.
 
@@ -30,14 +30,8 @@ class MultiLayerPerceptron:
             layer_sizes = [784, 256, 128, 10]
 
         self.weights = weights or [
-            he_initalization(
-                input_size,
-                output_size,
-                rng
-            ) for input_size, output_size in zip(
-                layer_sizes[:-1],
-                layer_sizes[1:]
-            )
+            he_initalization(input_size, output_size, rng)
+            for input_size, output_size in zip(layer_sizes[:-1], layer_sizes[1:])
         ]
         self.biases = biases or [np.zeros(layer_size) for layer_size in layer_sizes[1:]]
         self.x_train = x_train
@@ -45,6 +39,8 @@ class MultiLayerPerceptron:
         # The following lists will be used during forward pass and backpropagation
         self.z_vectors = []
         self.activations = []
+        self.rng = rng
+        self.layer_sizes = layer_sizes
 
     def forward(self, network_input):
         """The forward pass of the neural network.
@@ -62,7 +58,7 @@ class MultiLayerPerceptron:
             x = self.activations[-1]
             z = np.matmul(x, w) + b
             self.z_vectors.append(z)
-            if layer == n-1:
+            if layer == n - 1:
                 output = softmax(z)
             else:
                 output = relu(z)
@@ -139,12 +135,12 @@ class MultiLayerPerceptron:
                 # Can overflow if the learning rate is too high
                 dz_da = self.weights[layer]
                 dL_da = np.matmul(dL_dz, dz_da.T)  # (batch_size, prev_layer_size)
-                z = self.z_vectors[layer-1]
+                z = self.z_vectors[layer - 1]
                 da_dz = relu_derivative(z)
                 dL_dz = dL_da * da_dz
 
         # Returning the gradients allows us to use them in the Adam optimizer
-        return (W_gradients, b_gradients)
+        return (W_gradients[::-1], b_gradients[::-1])
 
     def predict(self, x):
         """Takes in an image or a vector of images in pixel values
@@ -184,61 +180,58 @@ class MultiLayerPerceptron:
         - second raw moment: mean of the squared values of a random variable.
           Measures how spread out a distribution is
         """
-        # First moment vector
-        m = 0
-        # Second moment vector
-        v = 0
-
-        # initial timestep
-        t = 0
-
         # Once we get below this, we can consider the parameters have converged
         loss_goal = 0.05
-        # Initialize loss with a high value
-        loss = 1
 
-        epsilon = 10e-8
-
+        loss = 10
+        # Initialize layer instances
+        layer_instances = []
         num_layers = len(self.weights)
+        for layer in range(num_layers):
+            weights = self.weights[layer]
+            biases = self.biases[layer]
+            layer_instance = Layer(weights, biases)
+            layer_instances.append(layer_instance)
+
         num_samples = x.shape[0]
+        epoch = 0
+
         while loss > loss_goal:
-            t += 1
+            epoch += 1
+            loss = 0
             x_shuffled, y_shuffled = self.shuffle_data(x, y)
             for start in range(0, num_samples, batch_size):
-                end = start + batch_size
+                end = min(start + batch_size, num_samples)
                 x_batch = x_shuffled[start:end]
-                y_batch = x_shuffled[start:end]
+                y_batch = y_shuffled[start:end]
 
                 y_pred = self.forward(x_batch)
-                gradients_w, gradients_b = self.backprop(y)
-
-                # TODO Implement loop to handle both weight and bias gradients
-                # Perform for each parameter, meaning for each weight matrix and vias vector
+                gradients_w, gradients_b = self.backprop(y_batch)
                 for layer in range(num_layers):
-                    gradient = gradients_w[layer]
-                    gradient_b = gradients_b[layer]
-                    # Update biased first moment estimates
-                    m = beta1 * m + (1-beta1) * gradient
-                    # Update biased second raw moment estimates
-                    v = beta2 * v + (1-beta2) * gradient**2
-                    # Compute bias corrected 1st moment estimates
-                    m = m / (1 - beta1**t)
-                    # Compute bias corrected 2nd raw moment estimates
-                    v = v / (1 - beta2**t)
-                    # Update parameters
-                    theta = theta - alpha*m / (np.sqrt(v)+epsilon)
+                    layer_instance = layer_instances[layer]
+                    grad_w = gradients_w[layer]
+                    grad_b = gradients_b[layer]
+                    layer_instance.update_layer(grad_w, grad_b)
+                    self.weights[layer] = layer_instance.weights
+                    self.biases[layer] = layer_instance.biases
+                y_pred = self.forward(x_batch)
+                y_hot_enc = one_hot_encode(y_batch)
+                ce_score = cross_entropy(y_hot_enc, y_pred)
+                size = end - start
+                loss += ce_score * size
+
+            # Update loss after each training cycle
+            y_pred = self.forward(x)
+            y_hot_enc = one_hot_encode(y)
+            # Normalize loss based on total samples
+            loss /= num_samples
+            print(f"Epoch {epoch}, Loss: {loss:.3f}")
 
             # Get gradients with respect to the stochastic objective at timestep t
             # gt =
 
-    def train(
-        self,
-        x_train,
-        y_train,
-        epochs=15,
-        batch_size=128,
-        learning_rate=0.01
-    ):
+    # TODO: Fix those matrix multiplication issues
+    def train(self, x_train, y_train, epochs=15, batch_size=128, learning_rate=0.01):
         """Train the model using stochastic gradient descent (SGD).
 
         Splitting the training data into batches will allow us to introduce
@@ -251,7 +244,7 @@ class MultiLayerPerceptron:
         start_time = time.time()
 
         if np.mean(x_train) > 1:
-            raise ValueError('Pixel values should be normalized')
+            raise ValueError("Pixel values should be normalized")
 
         num_samples = x_train.shape[0]
 
@@ -276,7 +269,7 @@ class MultiLayerPerceptron:
 
             # Normalize loss based on total samples
             epoch_loss /= num_samples
-            print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.3f}")
+            print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.3f}")
         end_time = time.time()
         diff = end_time - start_time
         print(f"Elapsed time: {diff:.2f} seconds")
@@ -289,20 +282,20 @@ class MultiLayerPerceptron:
         n = len(x_test)
         predictions = self.predict(x_test)
         comparison = (predictions == y_test).astype(int)
-        accuracy = sum(comparison)/n
+        accuracy = sum(comparison) / n
         percents = accuracy * 100
         print(f"Accuracy on test data: {percents:.2f}%")
         return percents
 
-    def save_parameters(self, destination_dir='src/web/parameters/'):
+    def save_parameters(self, destination_dir="src/web/parameters/"):
         """Save model parameters into a file.
         This will allow the Flask application to access those parameters once deployed.
         """
         n = len(self.weights)
         for i in range(n):
-            filename = 'layer' + str(i+1)
+            filename = "layer" + str(i + 1)
             np.savez(
-                destination_dir+filename,
+                destination_dir + filename,
                 weights=self.weights[i],
-                biases=self.biases[i]
+                biases=self.biases[i],
             )
