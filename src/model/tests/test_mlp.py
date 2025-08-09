@@ -55,7 +55,7 @@ class TestMLP(unittest.TestCase):
         bias_sum = sum(np.sum(bias_vector) for bias_vector in biases)
         self.assertEqual(bias_sum, 0)
 
-    def gen_x_sample(self, out_type='single', num_images=100):
+    def gen_x_sample(self, out_type="single", num_images=100):
         """Generate a random sample of pixel values to simulate image data.
 
         This method prevents repetition since samples are used in a bunch of tests.
@@ -65,7 +65,7 @@ class TestMLP(unittest.TestCase):
         low = 0
         high = 256  # Upper bound is exclusive
         num_pixels = 784
-        if out_type == 'single':
+        if out_type == "single":
             return self.rng.integers(low, high, num_pixels)
         return self.rng.integers(low, high, size=(num_images, num_pixels))
 
@@ -83,7 +83,7 @@ class TestMLP(unittest.TestCase):
         At the end, we should get a discrete probability distribution
         of 10 values.
         """
-        x = self.gen_x_sample('single')
+        x = self.gen_x_sample("single")
         output = self.model.forward(x)
         self.assertEqual(output.shape, (10,))
         summed_probabilities = np.sum(output)
@@ -96,7 +96,7 @@ class TestMLP(unittest.TestCase):
         self.assertEqual(len(self.model.activations), 4)
 
         # Verify that the feedforward also works with batches
-        x = self.gen_x_sample(out_type='vector', num_images=64)
+        x = self.gen_x_sample(out_type="vector", num_images=64)
         y_pred = self.model.forward(x)
         self.assertEqual(x.shape[0], y_pred.shape[0])
 
@@ -118,12 +118,12 @@ class TestMLP(unittest.TestCase):
             self.model.backprop(y_true)
 
         # Raise an error if x and y are based on a different number of images
-        x = self.gen_x_sample('array', num_images=99)
+        x = self.gen_x_sample("array", num_images=99)
         output = self.model.forward(x)
         with self.assertRaises(ValueError):
             self.model.backprop(y_true)
 
-        x = self.gen_x_sample('array')
+        x = self.gen_x_sample("array")
         x = normalize_image_data(x)
         output = self.model.forward(x)
         y_true_encoded = one_hot_encode(y_true)
@@ -145,13 +145,17 @@ class TestMLP(unittest.TestCase):
         # The loss function score should decrease
         output_after_backprop = self.model.forward(x)
         cross_entropy_after_backprop = loss.cross_entropy(
-            y_true_encoded,
-            output_after_backprop
+            y_true_encoded, output_after_backprop
         )
         self.assertTrue(cross_entropy_after_backprop < cross_entropy)
 
-        # Verify that backprop() returned lists of gradients
+        # Verify that the values returned by backprop() are lists of gradients
         self.assertTrue(len(w_gradients) == len(b_gradients) == n)
+
+        # Ensure gradients have correct shapes
+        for layer in range(n):
+            self.assertEqual(w_gradients[layer].shape, self.model.weights[layer].shape)
+            self.assertEqual(b_gradients[layer].shape, self.model.biases[layer].shape)
 
     def test_predict(self):
         """Tests for the networks digit prediction method.
@@ -164,7 +168,7 @@ class TestMLP(unittest.TestCase):
         self.assertIsInstance(y_pred, np.int64)
 
         # Test array inputs
-        image_vector = self.gen_x_sample('array')
+        image_vector = self.gen_x_sample("array")
         y_pred = self.model.predict(image_vector)
         self.assertIsInstance(y_pred, np.ndarray)
         self.assertTrue(np.issubdtype(y_pred.dtype, np.int64))
@@ -187,7 +191,7 @@ class TestMLP(unittest.TestCase):
     # The patch decorator patches a target with a new object.
     # For this test, we'll patch the standard ouput with the StringIO method,
     # which will allow us to test if the training method prints the expected strings.
-    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def test_train(self, mock_stdout):
         """Tests for the network's training method.
 
@@ -196,7 +200,7 @@ class TestMLP(unittest.TestCase):
 
         The method should raise an error if pixel data is not normalized.
         """
-        x = self.gen_x_sample('array')
+        x = self.gen_x_sample("array")
         y = self.gen_y_sample()
         # Should raise error if data is not normalized
         with self.assertRaises(ValueError):
@@ -217,17 +221,17 @@ class TestMLP(unittest.TestCase):
         self.assertIn("Loss", standard_output)
         self.assertIn("Elapsed time", standard_output)
 
-    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def test_accuracy(self, mock_stdout):
         """Verify that the accuracy measurement method prints to the standard output"""
-        x = self.gen_x_sample('array')
+        x = self.gen_x_sample("array")
         y = self.gen_y_sample()
         self.model.measure_accuracy(x, y)
         std_output = mock_stdout.getvalue()
         self.assertIn("Accuracy", std_output)
         self.assertIn("%", std_output)
 
-    @unittest.mock.patch('numpy.savez')
+    @unittest.mock.patch("numpy.savez")
     def test_parameter_save(self, mock_np_savez):
         """Verify that the model is able to save its parameters into files"""
         self.model.save_parameters()
