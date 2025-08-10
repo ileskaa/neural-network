@@ -28,6 +28,12 @@ The web app is a way to showcase the trained network in action. It is located in
 
 ## Time and Space Complexities
 
+The network is fully connected, meaning that each node of each layer is connected to each node of the previous and next layers. Time and space complexities therefore depend on the number of hidden layers as well as their size. The size of the input and output layers are constant, since each digit the network receives consists of 784 pixel values, and the network will always output a discrete probability distribution of 10 values.
+
+Let $n$ be the number of input neurons to a layer and let $m$ be the number of output neurons. The complexity for each layer will then be $O(n\cdot m + m)$,
+which simplifies to $O(n\cdot m)$. $n\cdot m$ is due to the matrix multiplications that have to be performed at each layer. The $+m$ is due to the biases that get added at each layer.
+The impact of the addition of biases on time and space complexity is however negligible.
+
 ## Large Language Models (LLMs)
 
 LLMs were a useful tool to quickly get a summary over a specific topic. For example, at the beginning of this project, I hesitated between implementing a multilayer perceptron (MLP) and a convolutional neural network (CNN). I therefore asked ChatGPT to summarize the main differences between these architectures. The answer was quite intelligible, and after watching a few videos to make sure the model was not hallucinating, I decided to go with the MLP. I got the sense that the MLP would be easier to implement, and that made it feel like a more realistic choice.
