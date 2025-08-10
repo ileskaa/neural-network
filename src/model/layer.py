@@ -9,7 +9,12 @@ class Layer:
     """
 
     def __init__(
-        self, weights: np.ndarray, biases: np.ndarray, alpha: float = 0.001
+        self,
+        weights: np.ndarray,
+        biases: np.ndarray,
+        alpha: float = 0.001,
+        beta1: float = 0.9,
+        beta2: float = 0.999,
     ) -> None:
         self.weights = weights
         self.biases = biases
@@ -19,11 +24,11 @@ class Layer:
         # Second moment vectors
         self.v_w = self.v_b = 0
         self.alpha = alpha
-        self.beta1 = 0.9
+        self.beta1 = beta1
         # 0.999 was too high. Would cause infinite values.
         # Very fast convergence with 0.98 and 0.97.
-        self.beta2 = 0.97
-        self.t = 0
+        self.beta2 = beta2
+        self.t = 0  # timestep
 
     def compute_estimates(
         self,

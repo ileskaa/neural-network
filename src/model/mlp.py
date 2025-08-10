@@ -201,7 +201,7 @@ class MultiLayerPerceptron:
         for layer in range(num_layers):
             weights = self.weights[layer]
             biases = self.biases[layer]
-            layer_instance = Layer(weights, biases, alpha)
+            layer_instance = Layer(weights, biases, alpha, beta1, beta2)
             layer_instances.append(layer_instance)
 
         num_samples = x.shape[0]

@@ -42,7 +42,7 @@ def main():
     # Adaptive moment estimation (Adam)
     # Was able to achieve 98.07% in just 5 epochs
     model = MultiLayerPerceptron([784, 384, 128, 10])
-    model.adam(x_train, y_train)
+    model.adam(x_train, y_train, alpha=0.001, beta1=0.9, beta2=0.97)
 
     model.measure_accuracy(x_test, y_test)
 
