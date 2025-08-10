@@ -5,7 +5,6 @@ _Aineopintojen harjoitustyö: algoritmit ja tekoäly_, 2025
 ## Documentation
 
 - [Project specification](./docs/project-spec.md)
-
 - [User guide](/docs/user-guide.md)
 - [Testing report](./docs/testing.md)
 - [Implementation document](./docs/implementation.md)
@@ -17,3 +16,4 @@ _Aineopintojen harjoitustyö: algoritmit ja tekoäly_, 2025
 - [Week 3](./docs/weekly-reports/week3.md)
 - [Week 4](./docs/weekly-reports/week4.md)
 - [Week 5](./docs/weekly-reports/week5.md)
+- [Week 6](./docs/weekly-reports/week6.md)
