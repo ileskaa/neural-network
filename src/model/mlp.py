@@ -165,10 +165,22 @@ class MultiLayerPerceptron:
         y_shuffled = y[permutated_indexes]
         return (x_shuffled, y_shuffled)
 
-    def adam(self, x, y, f, theta, alpha=0.001, beta1=0.9, beta2=0.999, batch_size=64):
+    def adam(
+        self,
+        x,
+        y,
+        loss_goal=0.015,
+        epochs=20,
+        alpha=0.001,
+        beta1=0.9,
+        beta2=0.999,
+        batch_size=64,
+    ):
         """Implementaion of the adaptive moment estimation (Adam) optimization algorithm.
 
         Explanation of parameters:
+        - loss goal: once we get below that threshold,
+          we can consider the model to have converged
         - alpha: stepsize
         - beta 1 and beta 2: exponential decay rates for the moment estimates.
           These are defined within a range of [0, 1)
@@ -180,9 +192,8 @@ class MultiLayerPerceptron:
         - second raw moment: mean of the squared values of a random variable.
           Measures how spread out a distribution is
         """
-        # Once we get below this, we can consider the parameters have converged
-        loss_goal = 0.05
 
+        # Initialize loss with a high value
         loss = 10
         # Initialize layer instances
         layer_instances = []
@@ -190,13 +201,13 @@ class MultiLayerPerceptron:
         for layer in range(num_layers):
             weights = self.weights[layer]
             biases = self.biases[layer]
-            layer_instance = Layer(weights, biases)
+            layer_instance = Layer(weights, biases, alpha)
             layer_instances.append(layer_instance)
 
         num_samples = x.shape[0]
         epoch = 0
 
-        while loss > loss_goal:
+        while loss > loss_goal and epoch < epochs:
             epoch += 1
             loss = 0
             x_shuffled, y_shuffled = self.shuffle_data(x, y)

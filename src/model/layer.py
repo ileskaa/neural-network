@@ -8,7 +8,9 @@ class Layer:
     Useful when working with the Adam optimization algorithm.
     """
 
-    def __init__(self, weights: np.ndarray, biases: np.ndarray) -> None:
+    def __init__(
+        self, weights: np.ndarray, biases: np.ndarray, alpha: float = 0.001
+    ) -> None:
         self.weights = weights
         self.biases = biases
         # First moment vectors
@@ -16,9 +18,11 @@ class Layer:
         self.m_b: int | np.ndarray = 0
         # Second moment vectors
         self.v_w = self.v_b = 0
-        self.alpha = 0.001
+        self.alpha = alpha
         self.beta1 = 0.9
-        self.beta2 = 0.999
+        # 0.999 was too high. Would cause infinite values.
+        # Very fast convergence with 0.98 and 0.97.
+        self.beta2 = 0.97
         self.t = 0
 
     def compute_estimates(
@@ -32,19 +36,12 @@ class Layer:
         # Update biased first moment estimates
         m = self.beta1 * m + (1 - self.beta1) * gradient
         # Update biased second raw moment estimates
-        # ISSUE: Values within v can grow to infinity
+        # Warning: values within v can grow to infinity if beta2 is too high
         v = self.beta2 * v + (1 - self.beta2) * gradient**2
-        v = np.clip(v, 1e-4, 1e4)
-        max_v = np.max(v)
-        # print("max v", max_v)
-        if np.isinf(max_v):
-            raise ValueError("Some value in v reached infinity")
         # Compute bias-corrected 1st moment estimates
         m_hat = m / (1 - self.beta1**t)
         # Compute bias-corrected 2nd raw moment estimates
         beta2_t = self.beta2**t
-        # ISSUE: If 1 - beta2_t is very small, v_hat might grow like crazy
-        # Might be useful to add espilon within the parentheses
         v_hat = v / (1 - beta2_t)
         return m_hat, v_hat
 
