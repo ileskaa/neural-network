@@ -33,41 +33,20 @@ def main():
     x_train = normalize_image_data(x_train)
     x_test = normalize_image_data(x_test)
 
-    epochs = 20
-
-    # On one attempt, this yielded a 97.49% accuracy
-    # layers = [784, 256, 128, 10]
-    # model = MultiLayerPerceptron(layers)
-    # model.train(x_train, y_train, epochs=20, learning_rate=0.02, batch_size=64)
-
-    # On one attempt, this yielded a 97.44% accuracy
-    # layers = [784, 256, 128, 10]
-    # model = MultiLayerPerceptron(layers)
-    # model.train(x_train, y_train, epochs=20, learning_rate=0.025, batch_size=92)
-
-    # Was able to hit 97.81% accuracy on normalized data, in 20 epochs
-    layers = [784, 384, 128, 10]
-    model = MultiLayerPerceptron(layers)
-    model.train(x_train, y_train, epochs=epochs, learning_rate=0.02, batch_size=64)
-
-    # Got 97.52% accuracy on normalized data. But training was slooow
-    # layers = [784, 512, 64, 10]
-    # model = MultiLayerPerceptron(layers)
-    # model.train(x_train, y_train, epochs=20, learning_rate=0.02, batch_size=64)
-
-    # Achieved 97.51% accuracy, but the training time was long
+    # Stochastic gradient descent (SGD)
+    # Was able to hit 97.81% accuracy on normalized data in 20 epochs
     # layers = [784, 384, 128, 10]
     # model = MultiLayerPerceptron(layers)
-    # model.train(x_train, y_train, epochs=20, learning_rate=0.015, batch_size=48)
-
-    # Hit 97.60% accuracy on mormalized test data
-    # layers = [784, 256, 256, 10]
-    # model = MultiLayerPerceptron(layers)
     # model.train(x_train, y_train, epochs=20, learning_rate=0.02, batch_size=64)
+
+    # Adaptive moment estimation (Adam)
+    # Was able to achieve 98.07% in just 5 epochs
+    model = MultiLayerPerceptron([784, 384, 128, 10])
+    model.adam(x_train, y_train)
 
     model.measure_accuracy(x_test, y_test)
 
-    # Save weights and biases into .npz files
+    # If you wish to save weights and biases into .npz files:
     # model.save_parameters()
 
 
