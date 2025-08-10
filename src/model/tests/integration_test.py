@@ -13,10 +13,12 @@ class TestModel(unittest.TestCase):
         """Create a model to be used during testing"""
         layer_sizes = [784, 256, 128, 10]
         rng = np.random.default_rng(seed=63)
+        # Intialize 2 models to test different training methods
         self.model = MultiLayerPerceptron(layer_sizes, rng)
+        self.model2 = MultiLayerPerceptron([784, 384, 128, 10], rng)
         l_bound = 0
         u_bound_exclusive = 256
-        sample_size = 20
+        sample_size = 16
         num_pixels = 784
         x_sample = rng.integers(
             l_bound, u_bound_exclusive, size=(sample_size, num_pixels)
@@ -33,6 +35,17 @@ class TestModel(unittest.TestCase):
         )
         accuracy = self.model.measure_accuracy(self.x_sample, self.y_sample)
         # The model should fit the data perfectly
+        self.assertEqual(accuracy, 100)
+
+        # Run tests for the Adam optimizer
+        self.model2.adam(
+            self.x_sample,
+            self.y_sample,
+            epochs=18,
+            alpha=0.001,
+            batch_size=16,
+        )
+        accuracy = self.model2.measure_accuracy(self.x_sample, self.y_sample)
         self.assertEqual(accuracy, 100)
 
     def test_all_layers_change(self):
