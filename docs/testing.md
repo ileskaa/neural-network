@@ -1,24 +1,37 @@
 # Testing Report
 
-The web app has been left out of the scope of testing.
+In addition to the neural network this project includes a small web application. The web app is however just aimed at offering an interface for the user to see the model in action. It has therefore been left out of the scope of automatic testing.
 
 ## Automatic Testing
 
-### Unit tests
+Test coverage for the model:
+![test coverage](./test_coverage.png)
 
-Go to the project root and use `poetry run pytest src` to run unit tests.
-
-Use
+To run automatic tests, go to the project root and use
 
 ```bash
-poetry run bash -c "coverage run --branch -m pytest src && coverage report -m"
+poetry run pytest src
 ```
 
-to get a coverage report in your terminal.
+To get a coverage report in your terminal, run the following from the project root:
+
+```bash
+poetry run coverage run --branch -m pytest src
+poetry run coverage report -m
+```
+
+### Unit tests
+
+Unit tests are implemented in `/src/model/tests/`.
+Most files in this directory are dedicated to unit tests.
+The only exception is the file named `/src/model/tests/integration_test.py`,
+which contains integration tests. More on those in the next section.
 
 ### Integration Tests
 
-Integration tests are implemented in `/src/model/tests/integration_test.py`
+Integration tests are implemented in `/src/model/tests/integration_test.py`.
+The goal with these tests is to go beyond individual methods and functions, and to test the network as a whole.
+This [article](https://www.sebastianbjorkqvist.com/blog/writing-automated-tests-for-neural-networks/) by Sebastian Björkqvist was a big help in implementing integration tests.
 
 ## Performance in Training
 
