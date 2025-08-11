@@ -43,6 +43,7 @@ class TestModel(unittest.TestCase):
             self.y_sample,
             epochs=18,
             alpha=0.001,
+            beta2=0.97,
             batch_size=16,
         )
         accuracy = self.model2.measure_accuracy(self.x_sample, self.y_sample)
