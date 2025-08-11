@@ -8,37 +8,37 @@ This project has essentially two parts: the neural network on one side, and a we
 
 This is definitely the most important part of the project, since it contains the actual implementation of the model. It can be found in `src/model/`. Here's a breakdown of the files:
 
-- `activations.py`
-- `loss.py`
-- `main.py`
-- `mlp.py`: the primary file of the neural network.
-- `mnist_loader.py`
-- `nn_utils.py`
+- `activations.py`: contains activation functions as well as their derivatives
+- `loss.py`: implements the loss function and its gradient
+- `main.py`: the module that is run to train a new model
+- `mlp.py`: the primary file of the neural network. Contains the `MultilayerPerceptron` class, which has the necessary methods to train and evaluate a model
+- `mnist_loader.py`: helper module to load the MNIST dataset
+- `nn_utils.py`: several utility functions, used for example in weight initialization and to one-hot encode values
 
-Then within `src/model/`, there is also the `tests/` directory which contains all unit tests.
+Within `src/model/`, there is also the `tests/` directory which contains all automatic tests.
 
 ### Web App
 
 The web app is a way to showcase the trained network in action. It is located in the `src/web/` directory. Here's a breakdown of its content:
 
-- `parameters/`
-- `static/`
-- `templates/`
-- `app.py`: the Flask server.
+- `parameters/`: contains `.npz` files, which are used to store the model parameters
+- `static/`: contains static files like Javascript and CSS
+- `templates/`: has the HTML template of the page
+- `app.py`: the Flask server
 
 ## Time and Space Complexities
 
 The network is fully connected, meaning that each node of each layer is connected to each node of the previous and next layers. Time and space complexities therefore depend on the number of hidden layers as well as their size. The size of the input and output layers are constant, since each digit the network receives consists of 784 pixel values, and the network will always output a discrete probability distribution of 10 values.
 
 Let $n$ be the number of input neurons to a layer and let $m$ be the number of output neurons. The complexity for each layer will then be $O(n\cdot m + m)$,
-which simplifies to $O(n\cdot m)$. $n\cdot m$ is due to the matrix multiplications that have to be performed at each layer. The $+m$ is due to the biases that get added at each layer.
+which simplifies to $O(n\cdot m)$. The product $n\cdot m$ is due to the matrix multiplications that have to be performed at each layer. The $+m$ is due to the biases that get added at each layer.
 The impact of the addition of biases on time and space complexity is however negligible.
 
 ## Large Language Models (LLMs)
 
 LLMs were a useful tool to quickly get a summary over a specific topic. For example, at the beginning of this project, I hesitated between implementing a multilayer perceptron (MLP) and a convolutional neural network (CNN). I therefore asked ChatGPT to summarize the main differences between these architectures. The answer was quite intelligible, and after watching a few videos to make sure the model was not hallucinating, I decided to go with the MLP. I got the sense that the MLP would be easier to implement, and that made it feel like a more realistic choice.
 
-LLMs were also handy for checking whether some sentence was correct. Sometimes, a sentence I wrote didn't feel quite right, and I would then ask if the sentence was correct. I was able to avoid several mistakes this way.
+LLMs were also handy for checking whether some sentence was correct. Sometimes, a sentence I wrote didn't feel quite right, and I would then ask if the sentence was correct. I was able to avoid several grammatical mistakes this way.
 
 ## References
 
