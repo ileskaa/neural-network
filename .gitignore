@@ -198,3 +198,6 @@ cython_debug/
 
 # Saves model accuracy
 accuracy.json
+
+# Personal notes
+notes.md
