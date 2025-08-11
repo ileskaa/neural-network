@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 def relu(x):
     """Rectified Linear Unit (ReLU).
     Common activation function for classification tasks.
@@ -11,12 +12,14 @@ def relu(x):
     """
     return np.maximum(x, 0)
 
+
 def relu_derivative(x):
     """Derivative of the ReLU activation function.
 
     Returns 1 if x is greater than 0. Otherwise returns 0.
     """
     return np.where(x > 0, 1, 0)
+
 
 def softmax(z):
     """Softmax activation function.
