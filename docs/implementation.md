@@ -12,6 +12,7 @@ This is definitely the most important part of the project, since it contains the
 - `loss.py`: implements the loss function and its gradient
 - `main.py`: the module that is run to train a new model
 - `mlp.py`: the primary file of the neural network. Contains the `MultilayerPerceptron` class, which has the necessary methods to train and evaluate a model
+- `layer.py`: contains the Layer class, which is used to keep track of weights, biases, and moment estimates when running the adaptive moment estimation algorithm
 - `mnist_loader.py`: helper module to load the MNIST dataset
 - `nn_utils.py`: several utility functions, used for example in weight initialization and to one-hot encode values
 
@@ -33,6 +34,31 @@ The network is fully connected, meaning that each node of each layer is connecte
 Let $n$ be the number of input neurons to a layer and let $m$ be the number of output neurons. The complexity for each layer will then be $O(n\cdot m + m)$,
 which simplifies to $O(n\cdot m)$. The product $n\cdot m$ is due to the matrix multiplications that have to be performed at each layer. The $+m$ is due to the biases that get added at each layer.
 The impact of the addition of biases on time and space complexity is however negligible.
+
+## Performance in Training
+
+I collected training durations for different layer structures. The results follow.
+
+5 attempts for each layer structure. Stochastic gradient descent. Used 15 epochs:
+
+| Layer structure     | Training time                 |
+| ------------------- | ----------------------------- |
+| [784, 512, 256, 10] | Between 60.7 and 68.3 seconds |
+| [784, 512, 128, 10] | Between 46.2 and 64.5 seconds |
+| [784, 256, 128, 10] | Between 24.8 and 31.2 seconds |
+
+As I suspected while writing about time complexity in my project specification,
+training time decreases significantly when reducing the size of the first hidden layer.
+The reason is that the heaviest matrix multiplications happen at the first hidden layer,
+given that the input layer, which is typically the largest, feeds into it.
+
+## Flaws and Possible Improvements
+
+If I had more time, it would have been nice to implement more training methods.
+Currently my project has stochastic gradient descent (SGD) and Adam.
+But there are so many more options! Like SGD with momentum and root mean square propagation, just to name a few.
+
+Also a CLI might have been a nice addition. Right now the user can tweak parameters by modifying the arguments given to the training method in the main file. But it could have been nice to have a CLI to guide the user and to allow him to customize parameters in a more interactive way.
 
 ## Large Language Models (LLMs)
 
