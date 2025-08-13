@@ -167,8 +167,8 @@ class MultiLayerPerceptron:
 
     def adam(
         self,
-        x,
-        y,
+        x: np.ndarray,
+        y: np.ndarray,
         loss_goal=0.015,
         epochs=20,
         alpha=0.001,
@@ -238,8 +238,6 @@ class MultiLayerPerceptron:
             loss /= num_samples
             print(f"Epoch {epoch}, Loss: {loss:.3f}")
 
-            # Get gradients with respect to the stochastic objective at timestep t
-            # gt =
 
     # TODO: Fix those matrix multiplication issues
     def train(self, x_train, y_train, epochs=15, batch_size=128, learning_rate=0.01):
