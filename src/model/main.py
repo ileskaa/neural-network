@@ -33,17 +33,19 @@ def main():
     x_train = normalize_image_data(x_train)
     x_test = normalize_image_data(x_test)
 
-    # Stochastic gradient descent (SGD)
-    # Was able to hit 97.81% accuracy on normalized data in 20 epochs
-    # layers = [784, 384, 128, 10]
-    # model = MultiLayerPerceptron(layers)
-    # model.train(x_train, y_train, epochs=20, learning_rate=0.02, batch_size=64)
+    # Initialize a model
+    # The first and last layer should always be 784 and 10, respectively
+    layers = [784, 384, 128, 10]
+    model = MultiLayerPerceptron(layers)
 
     # Adaptive moment estimation (Adam)
     # Was able to achieve 98.07% in just 5 epochs
-    model = MultiLayerPerceptron([784, 384, 128, 10])
     model.adam(x_train, y_train, alpha=0.001, beta1=0.9, beta2=0.97)
 
+    # Stochastic gradient descent (SGD):
+    # model.train(x_train, y_train, epochs=20, learning_rate=0.02, batch_size=64)
+
+    # Evaluate accuracy on testing dataset
     model.measure_accuracy(x_test, y_test)
 
     # If you wish to save weights and biases into .npz files:
