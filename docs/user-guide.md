@@ -47,8 +47,20 @@ The accuracy of the model on test data will then be printed to the terminal.
 There are various parameters impacting the training process that can be easily tweaked.
 To do so, open `src/model/main.py`.
 
-There you can tweak the layers of the model.
-But note that first and last layers should not be changed.
+### Tweaking the layers
+
+In `src/model/main.py` you can tweak the layers of the model.
+But note that first and last layers should not be changed, as that would result in an error
+during training. The input layer should always have size 784 since that's the number of
+pixels in an image of the MNIST dataset. And the ouput layer should always have size 10 since
+there are 10 possible digits.
+The layer in between are called hidden layers and can take any non-zero positive value.
+But be aware that if you create very large layers, training will take forever.
+The example of the main file uses only 2 hidden layers, but you can create
+as much of them as you want. There must however be at least be one hidden layer,
+since otherwise the model won't learn anything.
+
+### Adam
 
 By default the network will be trained using adaptive moment estimation (Adam) since that
 is the most effective training method.
@@ -57,24 +69,43 @@ Adam accepts the following parameters:
 - x: an array of images represented by their pixel values
 - y: array of digits corresponding to the images
 - loss_goal: once the loss gets below this value, we consider the model to have converged
-- epochs: the number of training cycles
+- epochs: the number of training cycles. However, if the model achieves its loss goal
+  before the given number of epochs, training will end
 - alpha: the learning rate
-- beta1: exponential decay rate for first moment estimates
-- beta2: exponential decay rate for second moment estimates
-- batch_size:
+- beta1: exponential decay rate for first moment estimates. The first moment is the mean
+  of the gradient
+- beta2: exponential decay rate for second raw moment estimates. The second raw moment is the
+  uncentered variance of the gradient, i.e. the mean of the squared gradient components
+- batch_size: training data is split into batches to induce stochasticity. This controls
+  how big each of those batches are
 
 The higher the decay rates, the more the model will "remember" the previous gradient updates.
+Adam updates parameters based on moving averages, and those decay rates determine how
+much of an impact each new gradient will have.
+This makes the training smoother as it avoids big spikes.
+An exponential decay rate of 0.9,
+for example, means that the update is 90% based on previous updates, and 10%
+comes from the recently computed gradient.
 
-Besides Adam, you can train a model using stochastic gradient descent (SGD).
-The main file includes a commented out example of how to run it.
+### Stochastic Gradient Descent (SGD)
+
+Besides Adam, you can train a model using stochastic gradient descent.
+SGD also achieves good results, but training takes slightly longer than with Adam.
+More epochs are required when using Adam, but on the other hand, each epoch is shorter.
+The main file includes a commented out line that allows you to run SGD.
 You can simply comment the line that includes the `model.adam` method, and uncomment the line
 having the `model.train` method.
 
-In there, you can tweak the layers, the number of epochs (training cycles), the learning_rate
-and the batch_size.
-As a note of caution, increasing the learning_rate too much will trigger overflow errors
-during matrix multiplications, and that will cause the model to stop learning.
-But feel free to experiment!
+In case you want to tweak the knobs of the `train` method,
+it accepts the following parameters:
+- x_train: image pixel values
+- y_train: actual digits corresponding to pixel values
+- epochs: number of training cycles
+- batch_size: SGD splits training data into batches and this allows you to control
+  how big each batch is
+- learning_rate: how much each gradient will impact parameter updates
+
+### Saving parameters
 
 To save the parameters obtained during training, you can uncomment the line containing
 
@@ -83,12 +114,15 @@ model.save_parameters()
 ```
 
 towards the end of the main file.
-Saving the parameters will erase the previous ones and those new parameters
+
+Saving parameters will erase the previous ones. As a result those new parameters
 will then be used if you decide to run the web app locally.
 
-## Running the App Locally
+The parameters are saved into `.npz` files, which is binary format implemented by numpy.
 
-At the project root, use
+## Running the Web App Locally
+
+From the project root, use
 
 ```bash
 poetry run flask --app src/web/app run
