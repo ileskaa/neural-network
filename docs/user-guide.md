@@ -3,7 +3,8 @@
 The fastest way to see this neural network in action is to open
 [this link](https://neural-network-jd02.onrender.com/).
 It might take some time to load when you open the page for the first time.
-The reason is that the app is deployed on a free plan, which will go to an idle state if not used for a while.
+The reason is that the app is deployed on a free plan, which will go to an idle state
+if not used for a while.
 Once the page is loaded, draw a digit (0-9) in the designated area.
 Once you press "Submit", the model will try to recognize the digit and
 output its guess to the screen.
@@ -12,10 +13,12 @@ the app will show the pre-processed canvas.
 That's what the pixels look like just before being fed to the network.
 You might wonder why the image gets so small after pre-processing.
 The reason is that the network was trained on images that are 28x28 pixels in size.
-Hence, the digits drawn by the user must be reduced to that same size to be interpretable by the model.
+Hence, the digits drawn by the user must be reduced to that same size to be
+interpretable by the model.
 And indeed, on modern screens, 28x28 looks very small.
 
-Do not expect the model to classify every single input correctly; it is definitely not perfect.
+Do not expect the model to classify every single input correctly;
+it is definitely not perfect.
 But hopefully it'll guess most digits most of the time!
 
 ## Training a Model
