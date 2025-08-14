@@ -7,9 +7,10 @@ I started experimenting with different decay rates, and was able to get really f
 Doing so, I was able to hit over 98% accuracy on test data in just 5 epochs.
 Wayyy faster than with SGD.
 
-Estimated workload:
+After that I worked mostly on documentation. My documents should now be up to date.
+I also added some types to my functions and methods to improve code readability.
 
-## Challenges
+Estimated workload: 12 hours
 
 ## What I Learned
 
@@ -23,3 +24,5 @@ This can cause things to go haywire.
 Once I lowered that decay rate, the algorithm became more adaptable, which fixed the overflow issue.
 
 ## Next Steps
+
+Peer review number 2.
