@@ -52,6 +52,21 @@ training time decreases significantly when reducing the size of the first hidden
 The reason is that the heaviest matrix multiplications happen at the first hidden layer,
 given that the input layer, which is typically the largest, feeds into it.
 
+## Model accuracy
+
+Adaptive moment estimation (Adam) yielded the best results. Each run will give a bit different
+results since weights are initialized randomly and the dataset is shuffled during
+training to induce stochasticity. But with Adam, 3 epochs are generally sufficient to
+achieve an accuracy above 97% on the test dataset.
+Running 9 epochs should get you past the 98% mark.
+With some luck, that benchmark can however be reached much sooner.
+On one run, I was even able to get 98.07% in just 5 cycles, while using a 0.98 beta-2
+decay rate.
+
+With stochastic gradient descent, achieving over 97% accuracy will typically take
+around 12 epochs. However, going past the 98% mark proves pretty much impossible.
+Even with 30 epochs, I was not able to reach 98%.
+
 ## Flaws and Possible Improvements
 
 If I had more time, it would have been nice to implement more training methods.
