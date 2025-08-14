@@ -13,12 +13,12 @@ class MultiLayerPerceptron:
 
     def __init__(
         self,
-        layer_sizes=None,
+        layer_sizes: list | None = None,
         rng=np.random.default_rng(),
-        weights=None,
-        biases=None,
-        x_train=None,
-        y_train=None,
+        weights: list | None = None,
+        biases: list | None = None,
+        x_train: np.ndarray | None = None,
+        y_train: np.ndarray | None = None,
     ) -> None:
         """Initialize weights and biases.
 
@@ -42,7 +42,7 @@ class MultiLayerPerceptron:
         self.rng = rng
         self.layer_sizes = layer_sizes
 
-    def forward(self, network_input):
+    def forward(self, network_input: np.ndarray) -> np.ndarray:
         """The forward pass of the neural network.
         For each digit, will return an array of size 10.
         Hence the output will have shape (num_digits, 10)
@@ -66,7 +66,7 @@ class MultiLayerPerceptron:
         final_output = self.activations[-1]
         return final_output
 
-    def clip_gradient(self, gradient: np.ndarray, max_norm: float = 1.3):
+    def clip_gradient(self, gradient: np.ndarray, max_norm: float = 1.3) -> np.ndarray:
         """Clip gradients that are at risk of growing too large.
 
         If the learning rate is high, the training process might end up generating
@@ -90,7 +90,8 @@ class MultiLayerPerceptron:
             gradient = gradient * (max_norm / (gradient_norm + epsilon))
         return gradient
 
-    def backprop(self, y_true: np.ndarray, learning_rate=0.01):
+    def backprop(self, y_true: np.ndarray,
+                 learning_rate=0.01) -> tuple[list, list]:
         """Backpropagation method.
         Updates all weights and biases in a way that minimizes the loss function.
 
@@ -138,11 +139,11 @@ class MultiLayerPerceptron:
                 z = self.z_vectors[layer - 1]
                 da_dz = relu_derivative(z)
                 dL_dz = dL_da * da_dz
-
         # Returning the gradients allows us to use them in the Adam optimizer
         return (W_gradients[::-1], b_gradients[::-1])
 
-    def predict(self, x):
+    # The intp type refers to an integer used for indexing
+    def predict(self, x: np.ndarray) -> np.ndarray | np.intp:
         """Takes in an image or a vector of images in pixel values
         and predicts which digit it is based on model parameters.
 
@@ -157,7 +158,7 @@ class MultiLayerPerceptron:
             return np.argmax(y_pred, axis=1)
         return np.argmax(y_pred)
 
-    def shuffle_data(self, x, y):
+    def shuffle_data(self, x: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Introduce stochasticity by shuffling your data"""
         num_samples = x.shape[0]
         permutated_indexes = self.rng.permutation(num_samples)
@@ -170,12 +171,12 @@ class MultiLayerPerceptron:
         x: np.ndarray,
         y: np.ndarray,
         loss_goal=0.015,
-        epochs=20,
+        epochs: int = 20,
         alpha=0.001,
         beta1=0.9,
         beta2=0.999,
-        batch_size=64,
-    ):
+        batch_size: int = 64,
+    ) -> None:
         """Implementaion of the adaptive moment estimation (Adam) optimization algorithm.
 
         Explanation of parameters:
@@ -238,9 +239,8 @@ class MultiLayerPerceptron:
             loss /= num_samples
             print(f"Epoch {epoch}, Loss: {loss:.3f}")
 
-
-    # TODO: Fix those matrix multiplication issues
-    def train(self, x_train, y_train, epochs=15, batch_size=128, learning_rate=0.01):
+    def train(self, x_train: np.ndarray, y_train: np.ndarray,
+              epochs: int = 15, batch_size: int = 128, learning_rate=0.01) -> None:
         """Train the model using stochastic gradient descent (SGD).
 
         Splitting the training data into batches will allow us to introduce
@@ -283,10 +283,10 @@ class MultiLayerPerceptron:
         diff = end_time - start_time
         print(f"Elapsed time: {diff:.2f} seconds")
 
-    def measure_accuracy(self, x_test, y_test) -> float:
+    def measure_accuracy(self, x_test: np.ndarray, y_test: np.ndarray) -> float:
         """Use test data to check the accuracy of the model.
 
-        Saves the measure accuracy in a JSON file, unless specified otherwise.
+        The measured accuracy is returned in percent format.
         """
         n = len(x_test)
         predictions = self.predict(x_test)
@@ -296,7 +296,7 @@ class MultiLayerPerceptron:
         print(f"Accuracy on test data: {percents:.2f}%")
         return percents
 
-    def save_parameters(self, destination_dir="src/web/parameters/"):
+    def save_parameters(self, destination_dir="src/web/parameters/") -> None:
         """Save model parameters into a file.
         This will allow the Flask application to access those parameters once deployed.
         """
