@@ -5,6 +5,7 @@ In addition to the neural network this project includes a small web application.
 ## Automatic Testing
 
 Test coverage for the model:
+
 ![test coverage](./test_coverage.png)
 
 To run automatic tests, go to the project root and use
